@@ -1,0 +1,1680 @@
+  
+ CHARMM>    ! LOOP LOG FILE OVERWRITTEN ON EACH PASS; GREATLY REDUCES OUTPUT
+ CHARMM>    ! LAST PASS ALWAYS SAVED (IN EVENT OF FAILURE)
+ CHARMM>     
+  
+ CHARMM>    ! re-read the initial PSF and CRD at the beginning of the main loop
+ CHARMM>    read psf card name 1cbn-solvated.psf
+ VOPEN> Attempting to open::1cbn-solvated.psf::
+ MAINIO> Protein structure file being read from unit  90.
+ PSFRD2> Reading PSF in the expanded format.
+ TITLE>  * NEW_1CBN-18126-1-SOLV.PSF
+ TITLE>  * SOLVATION: RHDO WITH A CRYSTAL DIMENSION OF 50.9261
+ TITLE>  *  DATE:    12/29/ 9     15:23:22      CREATED BY USER: tim
+ TITLE>  *
+ PSFSUM> PSF modified: NONBOND lists and IMAGE atoms cleared.
+ PSFSUM> Summary of the structure file counters :
+         Number of segments      =        2   Number of residues   =     2847
+         Number of atoms         =     9042   Number of groups     =     2996
+         Number of bonds         =     9051   Number of angles     =     3967
+         Number of dihedrals     =     1705   Number of impropers  =      107
+         Number of cross-terms   =       44
+         Number of HB acceptors  =     2866   Number of HB donors  =       71
+         Number of NB exclusions =        0   Total charge =    0.00000
+ VCLOSE: Closing unit   90 with status "KEEP"
+  
+ CHARMM>    read coor card name 1cbn-solvated.crd
+ VOPEN> Attempting to open::1cbn-solvated.crd::
+          SPATIAL COORDINATES BEING READ FROM UNIT 90
+ TITLE> * NEW_1CBN-18126-1-SOLV.CRD
+ TITLE> * SOLVATION: RHDO WITH A CRYSTAL DIMENSION OF 50.9261
+ TITLE> *  DATE:    12/29/ 9     15:23:23      CREATED BY USER: TIM
+ TITLE> *
+ VCLOSE: Closing unit   90 with status "KEEP"
+  
+ CHARMM>     
+  
+ CHARMM>    ! RANDOM WATER REPLACEMENT
+ CHARMM>    set IONTYP = POT
+ Parameter: IONTYP <- "POT"
+  
+ CHARMM>    stream addions.str
+ VOPEN> Attempting to open::addions.str::
+ OPNLGU> Unit 99 opened for READONLY access to /v/bigbox12/home/tim/projects/learning/tutorial/new_files/final/addions.str
+
+                    INPUT STREAM SWITCHING TO UNIT    99
+ RDTITL> * POTASSIUMS AND CHLORIDE ADDITION;    10 CL-    10 K+ MIN DIST 5.5
+ RDTITL> * EXCLUDING .NOT. SEGID BWAT
+ RDTITL> *
+ Parameter: IN1 <- "" <empty>
+  
+ CHARMM>     
+  
+ CHARMM>    ! sol   particles to exclude; atom selection w/o SELE and END
+ CHARMM>    ! ineg   no. of chlorides
+ CHARMM>    ! ipos   no. of potassiums
+ CHARMM>    ! mnd   min distance to another solute particle
+ CHARMM>     
+  
+ CHARMM>    ! INITIALIZE CHLORIDES; COORDS SET 0,0,0
+ CHARMM>    read sequ @nneg @ineg
+ Parameter: NNEG -> "CLA"
+ Parameter: INEG -> "   10"
+  
+ CHARMM>    generate @negion noang nodihe first none last none
+ Parameter: NEGION -> "CL"
+ NO PATCHING WILL BE DONE ON THE FIRST RESIDUE
+ NO PATCHING WILL BE DONE ON THE LAST  RESIDUE
+ GENPSF> Segment   3 has been generated. Its identifier is CL.
+ PSFSUM> PSF modified: NONBOND lists and IMAGE atoms cleared.
+ PSFSUM> Summary of the structure file counters :
+         Number of segments      =        3   Number of residues   =     2857
+         Number of atoms         =     9052   Number of groups     =     3006
+         Number of bonds         =     9051   Number of angles     =     3967
+         Number of dihedrals     =     1705   Number of impropers  =      107
+         Number of cross-terms   =       44
+         Number of HB acceptors  =     2866   Number of HB donors  =       71
+         Number of NB exclusions =        0   Total charge =  -10.00000
+  
+ CHARMM>    coor set xdir 0.0 ydir 0.0 zdir 0.0 sele segid @negion end
+ Parameter: NEGION -> "CL"
+ SELRPN>     10 atoms have been selected out of   9052
+ SELECTED COORDINATES SET IN THE MAIN SET.
+
+  
+ CHARMM>     
+  
+ CHARMM>    ! PICK A WATER MOLECULE AND REPLACE IT WITH A CHLORIDE ION
+ CHARMM>    set k 1
+ Parameter: K <- "1"
+  
+ CHARMM>    label ilp
+  
+ CHARMM>       define xcld sele ( @SOL ) .or. segid @negion end                     ! EXCLUDED SEGMENTS
+ Parameter: SOL -> ".NOT. SEGID BWAT"
+ Parameter: NEGION -> "CL"
+ SELRPN>    649 atoms have been selected out of   9052
+  
+ CHARMM>       define prox sele xcld .around. @MND end                              ! NEARBY EXCLUDED ATOMS
+ Parameter: MND -> "5.5"
+ SELRPN>   1807 atoms have been selected out of   9052
+  
+ CHARMM>       define list sele atom BWAT * OH2 .and. .not. prox end                ! WATERS NOT NEARBY
+ SELRPN>   2408 atoms have been selected out of   9052
+  
+ CHARMM>       calc in int( ?RAND * ?NSEL )                                         ! RANDOM INTEGER, BASED ON WATER COUNT
+ RDCMND substituted energy or value "?RAND" to "0.458724"
+ RDCMND substituted energy or value "?NSEL" to "2408"
+Evaluating: INT(0.458724*2408)
+ Parameter: IN <- "1104"
+  
+ CHARMM>       if in .lt. 1 set in ?NSEL                                            ! CHECK FOR ZERO, CHANGE TO MAX VALUE
+ RDCMND substituted energy or value "?NSEL" to "2408"
+ Comparing "1104" and "1".
+ IF test evaluated as false.  Skipping command
+  
+ CHARMM>       define targ sele list .subset. @IN end                               ! PICK WATER VIA RANDOM INDEX
+ Parameter: IN -> "1104"
+ SELRPN>      1 atoms have been selected out of   9052
+  
+ CHARMM>       coor stat sele targ end                                              ! GET OH2 ATOM COORDS, ASSIGN TO CHLORIDE
+ SELRPN>      1 atoms have been selected out of   9052
+ STATISTICS FOR         1 SELECTED ATOMS:
+    XMIN =  -10.735838 XMAX =  -10.735838 XAVE =  -10.735838
+    YMIN =   20.645733 YMAX =   20.645733 YAVE =   20.645733
+    ZMIN =   -0.303871 ZMAX =   -0.303871 ZAVE =   -0.303871
+    WMIN =    0.000000 WMAX =    0.000000 WAVE =    0.000000
+  
+ CHARMM>       coor set xdir ?XAVE ydir ?YAVE zdir ?ZAVE sele atom @negion @K @nneg end
+ Parameter: NEGION -> "CL"
+ Parameter: K -> "1"
+ Parameter: NNEG -> "CLA"
+ RDCMND substituted energy or value "?XAVE" to "-10.7358"
+ RDCMND substituted energy or value "?YAVE" to "20.6457"
+ RDCMND substituted energy or value "?ZAVE" to "-0.303871"
+ SELRPN>      1 atoms have been selected out of   9052
+ SELECTED COORDINATES SET IN THE MAIN SET.
+
+  
+ CHARMM>       delete atom sele .byres. targ end sort                               ! REMOVE THE WATER MOLECULE
+ SELRPN>      3 atoms have been selected out of   9052
+
+ Message from MAPIC: Atom numbers are changed.
+
+ Message from MAPIC:          1 residues deleted.
+ DELTIC:         3 bonds deleted
+ DELTIC:         1 angles deleted
+ DELTIC:         1 acceptors deleted
+ PSFSUM> PSF modified: NONBOND lists and IMAGE atoms cleared.
+ PSFSUM> Summary of the structure file counters :
+         Number of segments      =        3   Number of residues   =     2856
+         Number of atoms         =     9049   Number of groups     =     3005
+         Number of bonds         =     9048   Number of angles     =     3966
+         Number of dihedrals     =     1705   Number of impropers  =      107
+         Number of cross-terms   =       44
+         Number of HB acceptors  =     2865   Number of HB donors  =       71
+         Number of NB exclusions =        0   Total charge =  -10.00000
+  
+ CHARMM>       incr k by 1
+ Parameter: K <- "2"
+  
+ CHARMM>    if k .le. @ineg goto ilp
+ Parameter: INEG -> "   10"
+ Comparing "2" and "10".
+ IF test evaluated as true.  Performing command
+  
+ CHARMM>       define xcld sele ( @SOL ) .or. segid @negion end                     ! EXCLUDED SEGMENTS
+ Parameter: SOL -> ".NOT. SEGID BWAT"
+ Parameter: NEGION -> "CL"
+ SELRPN>    649 atoms have been selected out of   9049
+  
+ CHARMM>       define prox sele xcld .around. @MND end                              ! NEARBY EXCLUDED ATOMS
+ Parameter: MND -> "5.5"
+ SELRPN>   1870 atoms have been selected out of   9049
+  
+ CHARMM>       define list sele atom BWAT * OH2 .and. .not. prox end                ! WATERS NOT NEARBY
+ SELRPN>   2386 atoms have been selected out of   9049
+  
+ CHARMM>       calc in int( ?RAND * ?NSEL )                                         ! RANDOM INTEGER, BASED ON WATER COUNT
+ RDCMND substituted energy or value "?RAND" to "0.779985"
+ RDCMND substituted energy or value "?NSEL" to "2386"
+Evaluating: INT(0.779985*2386)
+ Parameter: IN <- "1861"
+  
+ CHARMM>       if in .lt. 1 set in ?NSEL                                            ! CHECK FOR ZERO, CHANGE TO MAX VALUE
+ RDCMND substituted energy or value "?NSEL" to "2386"
+ Comparing "1861" and "1".
+ IF test evaluated as false.  Skipping command
+  
+ CHARMM>       define targ sele list .subset. @IN end                               ! PICK WATER VIA RANDOM INDEX
+ Parameter: IN -> "1861"
+ SELRPN>      1 atoms have been selected out of   9049
+  
+ CHARMM>       coor stat sele targ end                                              ! GET OH2 ATOM COORDS, ASSIGN TO CHLORIDE
+ SELRPN>      1 atoms have been selected out of   9049
+ STATISTICS FOR         1 SELECTED ATOMS:
+    XMIN =   11.585226 XMAX =   11.585226 XAVE =   11.585226
+    YMIN =   12.700618 YMAX =   12.700618 YAVE =   12.700618
+    ZMIN =    5.877262 ZMAX =    5.877262 ZAVE =    5.877262
+    WMIN =    0.000000 WMAX =    0.000000 WAVE =    0.000000
+  
+ CHARMM>       coor set xdir ?XAVE ydir ?YAVE zdir ?ZAVE sele atom @negion @K @nneg end
+ Parameter: NEGION -> "CL"
+ Parameter: K -> "2"
+ Parameter: NNEG -> "CLA"
+ RDCMND substituted energy or value "?XAVE" to "11.5852"
+ RDCMND substituted energy or value "?YAVE" to "12.7006"
+ RDCMND substituted energy or value "?ZAVE" to "5.87726"
+ SELRPN>      1 atoms have been selected out of   9049
+ SELECTED COORDINATES SET IN THE MAIN SET.
+
+  
+ CHARMM>       delete atom sele .byres. targ end sort                               ! REMOVE THE WATER MOLECULE
+ SELRPN>      3 atoms have been selected out of   9049
+
+ Message from MAPIC: Atom numbers are changed.
+
+ Message from MAPIC:          1 residues deleted.
+ DELTIC:         3 bonds deleted
+ DELTIC:         1 angles deleted
+ DELTIC:         1 acceptors deleted
+ PSFSUM> PSF modified: NONBOND lists and IMAGE atoms cleared.
+ PSFSUM> Summary of the structure file counters :
+         Number of segments      =        3   Number of residues   =     2855
+         Number of atoms         =     9046   Number of groups     =     3004
+         Number of bonds         =     9045   Number of angles     =     3965
+         Number of dihedrals     =     1705   Number of impropers  =      107
+         Number of cross-terms   =       44
+         Number of HB acceptors  =     2864   Number of HB donors  =       71
+         Number of NB exclusions =        0   Total charge =  -10.00000
+  
+ CHARMM>       incr k by 1
+ Parameter: K <- "3"
+  
+ CHARMM>    if k .le. @ineg goto ilp
+ Parameter: INEG -> "   10"
+ Comparing "3" and "10".
+ IF test evaluated as true.  Performing command
+  
+ CHARMM>       define xcld sele ( @SOL ) .or. segid @negion end                     ! EXCLUDED SEGMENTS
+ Parameter: SOL -> ".NOT. SEGID BWAT"
+ Parameter: NEGION -> "CL"
+ SELRPN>    649 atoms have been selected out of   9046
+  
+ CHARMM>       define prox sele xcld .around. @MND end                              ! NEARBY EXCLUDED ATOMS
+ Parameter: MND -> "5.5"
+ SELRPN>   1902 atoms have been selected out of   9046
+  
+ CHARMM>       define list sele atom BWAT * OH2 .and. .not. prox end                ! WATERS NOT NEARBY
+ SELRPN>   2375 atoms have been selected out of   9046
+  
+ CHARMM>       calc in int( ?RAND * ?NSEL )                                         ! RANDOM INTEGER, BASED ON WATER COUNT
+ RDCMND substituted energy or value "?RAND" to "0.212415"
+ RDCMND substituted energy or value "?NSEL" to "2375"
+Evaluating: INT(0.212415*2375)
+ Parameter: IN <- "504"
+  
+ CHARMM>       if in .lt. 1 set in ?NSEL                                            ! CHECK FOR ZERO, CHANGE TO MAX VALUE
+ RDCMND substituted energy or value "?NSEL" to "2375"
+ Comparing "504" and "1".
+ IF test evaluated as false.  Skipping command
+  
+ CHARMM>       define targ sele list .subset. @IN end                               ! PICK WATER VIA RANDOM INDEX
+ Parameter: IN -> "504"
+ SELRPN>      1 atoms have been selected out of   9046
+  
+ CHARMM>       coor stat sele targ end                                              ! GET OH2 ATOM COORDS, ASSIGN TO CHLORIDE
+ SELRPN>      1 atoms have been selected out of   9046
+ STATISTICS FOR         1 SELECTED ATOMS:
+    XMIN =   -0.422761 XMAX =   -0.422761 XAVE =   -0.422761
+    YMIN =  -18.194895 YMAX =  -18.194895 YAVE =  -18.194895
+    ZMIN =   -0.293241 ZMAX =   -0.293241 ZAVE =   -0.293241
+    WMIN =    0.000000 WMAX =    0.000000 WAVE =    0.000000
+  
+ CHARMM>       coor set xdir ?XAVE ydir ?YAVE zdir ?ZAVE sele atom @negion @K @nneg end
+ Parameter: NEGION -> "CL"
+ Parameter: K -> "3"
+ Parameter: NNEG -> "CLA"
+ RDCMND substituted energy or value "?XAVE" to "-0.422761"
+ RDCMND substituted energy or value "?YAVE" to "-18.1949"
+ RDCMND substituted energy or value "?ZAVE" to "-0.293241"
+ SELRPN>      1 atoms have been selected out of   9046
+ SELECTED COORDINATES SET IN THE MAIN SET.
+
+  
+ CHARMM>       delete atom sele .byres. targ end sort                               ! REMOVE THE WATER MOLECULE
+ SELRPN>      3 atoms have been selected out of   9046
+
+ Message from MAPIC: Atom numbers are changed.
+
+ Message from MAPIC:          1 residues deleted.
+ DELTIC:         3 bonds deleted
+ DELTIC:         1 angles deleted
+ DELTIC:         1 acceptors deleted
+ PSFSUM> PSF modified: NONBOND lists and IMAGE atoms cleared.
+ PSFSUM> Summary of the structure file counters :
+         Number of segments      =        3   Number of residues   =     2854
+         Number of atoms         =     9043   Number of groups     =     3003
+         Number of bonds         =     9042   Number of angles     =     3964
+         Number of dihedrals     =     1705   Number of impropers  =      107
+         Number of cross-terms   =       44
+         Number of HB acceptors  =     2863   Number of HB donors  =       71
+         Number of NB exclusions =        0   Total charge =  -10.00000
+  
+ CHARMM>       incr k by 1
+ Parameter: K <- "4"
+  
+ CHARMM>    if k .le. @ineg goto ilp
+ Parameter: INEG -> "   10"
+ Comparing "4" and "10".
+ IF test evaluated as true.  Performing command
+  
+ CHARMM>       define xcld sele ( @SOL ) .or. segid @negion end                     ! EXCLUDED SEGMENTS
+ Parameter: SOL -> ".NOT. SEGID BWAT"
+ Parameter: NEGION -> "CL"
+ SELRPN>    649 atoms have been selected out of   9043
+  
+ CHARMM>       define prox sele xcld .around. @MND end                              ! NEARBY EXCLUDED ATOMS
+ Parameter: MND -> "5.5"
+ SELRPN>   1947 atoms have been selected out of   9043
+  
+ CHARMM>       define list sele atom BWAT * OH2 .and. .not. prox end                ! WATERS NOT NEARBY
+ SELRPN>   2360 atoms have been selected out of   9043
+  
+ CHARMM>       calc in int( ?RAND * ?NSEL )                                         ! RANDOM INTEGER, BASED ON WATER COUNT
+ RDCMND substituted energy or value "?RAND" to "6.679494E-02"
+ RDCMND substituted energy or value "?NSEL" to "2360"
+Evaluating: INT(6.679494E-02*2360)
+ Parameter: IN <- "157"
+  
+ CHARMM>       if in .lt. 1 set in ?NSEL                                            ! CHECK FOR ZERO, CHANGE TO MAX VALUE
+ RDCMND substituted energy or value "?NSEL" to "2360"
+ Comparing "157" and "1".
+ IF test evaluated as false.  Skipping command
+  
+ CHARMM>       define targ sele list .subset. @IN end                               ! PICK WATER VIA RANDOM INDEX
+ Parameter: IN -> "157"
+ SELRPN>      1 atoms have been selected out of   9043
+  
+ CHARMM>       coor stat sele targ end                                              ! GET OH2 ATOM COORDS, ASSIGN TO CHLORIDE
+ SELRPN>      1 atoms have been selected out of   9043
+ STATISTICS FOR         1 SELECTED ATOMS:
+    XMIN =   -7.849216 XMAX =   -7.849216 XAVE =   -7.849216
+    YMIN =   10.104137 YMAX =   10.104137 YAVE =   10.104137
+    ZMIN =  -19.613102 ZMAX =  -19.613102 ZAVE =  -19.613102
+    WMIN =    0.000000 WMAX =    0.000000 WAVE =    0.000000
+  
+ CHARMM>       coor set xdir ?XAVE ydir ?YAVE zdir ?ZAVE sele atom @negion @K @nneg end
+ Parameter: NEGION -> "CL"
+ Parameter: K -> "4"
+ Parameter: NNEG -> "CLA"
+ RDCMND substituted energy or value "?XAVE" to "-7.84922"
+ RDCMND substituted energy or value "?YAVE" to "10.1041"
+ RDCMND substituted energy or value "?ZAVE" to "-19.6131"
+ SELRPN>      1 atoms have been selected out of   9043
+ SELECTED COORDINATES SET IN THE MAIN SET.
+
+  
+ CHARMM>       delete atom sele .byres. targ end sort                               ! REMOVE THE WATER MOLECULE
+ SELRPN>      3 atoms have been selected out of   9043
+
+ Message from MAPIC: Atom numbers are changed.
+
+ Message from MAPIC:          1 residues deleted.
+ DELTIC:         3 bonds deleted
+ DELTIC:         1 angles deleted
+ DELTIC:         1 acceptors deleted
+ PSFSUM> PSF modified: NONBOND lists and IMAGE atoms cleared.
+ PSFSUM> Summary of the structure file counters :
+         Number of segments      =        3   Number of residues   =     2853
+         Number of atoms         =     9040   Number of groups     =     3002
+         Number of bonds         =     9039   Number of angles     =     3963
+         Number of dihedrals     =     1705   Number of impropers  =      107
+         Number of cross-terms   =       44
+         Number of HB acceptors  =     2862   Number of HB donors  =       71
+         Number of NB exclusions =        0   Total charge =  -10.00000
+  
+ CHARMM>       incr k by 1
+ Parameter: K <- "5"
+  
+ CHARMM>    if k .le. @ineg goto ilp
+ Parameter: INEG -> "   10"
+ Comparing "5" and "10".
+ IF test evaluated as true.  Performing command
+  
+ CHARMM>       define xcld sele ( @SOL ) .or. segid @negion end                     ! EXCLUDED SEGMENTS
+ Parameter: SOL -> ".NOT. SEGID BWAT"
+ Parameter: NEGION -> "CL"
+ SELRPN>    649 atoms have been selected out of   9040
+  
+ CHARMM>       define prox sele xcld .around. @MND end                              ! NEARBY EXCLUDED ATOMS
+ Parameter: MND -> "5.5"
+ SELRPN>   2015 atoms have been selected out of   9040
+  
+ CHARMM>       define list sele atom BWAT * OH2 .and. .not. prox end                ! WATERS NOT NEARBY
+ SELRPN>   2337 atoms have been selected out of   9040
+  
+ CHARMM>       calc in int( ?RAND * ?NSEL )                                         ! RANDOM INTEGER, BASED ON WATER COUNT
+ RDCMND substituted energy or value "?RAND" to "0.622538"
+ RDCMND substituted energy or value "?NSEL" to "2337"
+Evaluating: INT(0.622538*2337)
+ Parameter: IN <- "1454"
+  
+ CHARMM>       if in .lt. 1 set in ?NSEL                                            ! CHECK FOR ZERO, CHANGE TO MAX VALUE
+ RDCMND substituted energy or value "?NSEL" to "2337"
+ Comparing "1454" and "1".
+ IF test evaluated as false.  Skipping command
+  
+ CHARMM>       define targ sele list .subset. @IN end                               ! PICK WATER VIA RANDOM INDEX
+ Parameter: IN -> "1454"
+ SELRPN>      1 atoms have been selected out of   9040
+  
+ CHARMM>       coor stat sele targ end                                              ! GET OH2 ATOM COORDS, ASSIGN TO CHLORIDE
+ SELRPN>      1 atoms have been selected out of   9040
+ STATISTICS FOR         1 SELECTED ATOMS:
+    XMIN =   17.804019 XMAX =   17.804019 XAVE =   17.804019
+    YMIN =  -15.463964 YMAX =  -15.463964 YAVE =  -15.463964
+    ZMIN =   11.375719 ZMAX =   11.375719 ZAVE =   11.375719
+    WMIN =    0.000000 WMAX =    0.000000 WAVE =    0.000000
+  
+ CHARMM>       coor set xdir ?XAVE ydir ?YAVE zdir ?ZAVE sele atom @negion @K @nneg end
+ Parameter: NEGION -> "CL"
+ Parameter: K -> "5"
+ Parameter: NNEG -> "CLA"
+ RDCMND substituted energy or value "?XAVE" to "17.804"
+ RDCMND substituted energy or value "?YAVE" to "-15.464"
+ RDCMND substituted energy or value "?ZAVE" to "11.3757"
+ SELRPN>      1 atoms have been selected out of   9040
+ SELECTED COORDINATES SET IN THE MAIN SET.
+
+  
+ CHARMM>       delete atom sele .byres. targ end sort                               ! REMOVE THE WATER MOLECULE
+ SELRPN>      3 atoms have been selected out of   9040
+
+ Message from MAPIC: Atom numbers are changed.
+
+ Message from MAPIC:          1 residues deleted.
+ DELTIC:         3 bonds deleted
+ DELTIC:         1 angles deleted
+ DELTIC:         1 acceptors deleted
+ PSFSUM> PSF modified: NONBOND lists and IMAGE atoms cleared.
+ PSFSUM> Summary of the structure file counters :
+         Number of segments      =        3   Number of residues   =     2852
+         Number of atoms         =     9037   Number of groups     =     3001
+         Number of bonds         =     9036   Number of angles     =     3962
+         Number of dihedrals     =     1705   Number of impropers  =      107
+         Number of cross-terms   =       44
+         Number of HB acceptors  =     2861   Number of HB donors  =       71
+         Number of NB exclusions =        0   Total charge =  -10.00000
+  
+ CHARMM>       incr k by 1
+ Parameter: K <- "6"
+  
+ CHARMM>    if k .le. @ineg goto ilp
+ Parameter: INEG -> "   10"
+ Comparing "6" and "10".
+ IF test evaluated as true.  Performing command
+  
+ CHARMM>       define xcld sele ( @SOL ) .or. segid @negion end                     ! EXCLUDED SEGMENTS
+ Parameter: SOL -> ".NOT. SEGID BWAT"
+ Parameter: NEGION -> "CL"
+ SELRPN>    649 atoms have been selected out of   9037
+  
+ CHARMM>       define prox sele xcld .around. @MND end                              ! NEARBY EXCLUDED ATOMS
+ Parameter: MND -> "5.5"
+ SELRPN>   2053 atoms have been selected out of   9037
+  
+ CHARMM>       define list sele atom BWAT * OH2 .and. .not. prox end                ! WATERS NOT NEARBY
+ SELRPN>   2323 atoms have been selected out of   9037
+  
+ CHARMM>       calc in int( ?RAND * ?NSEL )                                         ! RANDOM INTEGER, BASED ON WATER COUNT
+ RDCMND substituted energy or value "?RAND" to "0.999018"
+ RDCMND substituted energy or value "?NSEL" to "2323"
+Evaluating: INT(0.999018*2323)
+ Parameter: IN <- "2320"
+  
+ CHARMM>       if in .lt. 1 set in ?NSEL                                            ! CHECK FOR ZERO, CHANGE TO MAX VALUE
+ RDCMND substituted energy or value "?NSEL" to "2323"
+ Comparing "2320" and "1".
+ IF test evaluated as false.  Skipping command
+  
+ CHARMM>       define targ sele list .subset. @IN end                               ! PICK WATER VIA RANDOM INDEX
+ Parameter: IN -> "2320"
+ SELRPN>      1 atoms have been selected out of   9037
+  
+ CHARMM>       coor stat sele targ end                                              ! GET OH2 ATOM COORDS, ASSIGN TO CHLORIDE
+ SELRPN>      1 atoms have been selected out of   9037
+ STATISTICS FOR         1 SELECTED ATOMS:
+    XMIN =   21.129570 XMAX =   21.129570 XAVE =   21.129570
+    YMIN =    6.278404 YMAX =    6.278404 YAVE =    6.278404
+    ZMIN =   19.764559 ZMAX =   19.764559 ZAVE =   19.764559
+    WMIN =    0.000000 WMAX =    0.000000 WAVE =    0.000000
+  
+ CHARMM>       coor set xdir ?XAVE ydir ?YAVE zdir ?ZAVE sele atom @negion @K @nneg end
+ Parameter: NEGION -> "CL"
+ Parameter: K -> "6"
+ Parameter: NNEG -> "CLA"
+ RDCMND substituted energy or value "?XAVE" to "21.1296"
+ RDCMND substituted energy or value "?YAVE" to "6.2784"
+ RDCMND substituted energy or value "?ZAVE" to "19.7646"
+ SELRPN>      1 atoms have been selected out of   9037
+ SELECTED COORDINATES SET IN THE MAIN SET.
+
+  
+ CHARMM>       delete atom sele .byres. targ end sort                               ! REMOVE THE WATER MOLECULE
+ SELRPN>      3 atoms have been selected out of   9037
+
+ Message from MAPIC: Atom numbers are changed.
+
+ Message from MAPIC:          1 residues deleted.
+ DELTIC:         3 bonds deleted
+ DELTIC:         1 angles deleted
+ DELTIC:         1 acceptors deleted
+ PSFSUM> PSF modified: NONBOND lists and IMAGE atoms cleared.
+ PSFSUM> Summary of the structure file counters :
+         Number of segments      =        3   Number of residues   =     2851
+         Number of atoms         =     9034   Number of groups     =     3000
+         Number of bonds         =     9033   Number of angles     =     3961
+         Number of dihedrals     =     1705   Number of impropers  =      107
+         Number of cross-terms   =       44
+         Number of HB acceptors  =     2860   Number of HB donors  =       71
+         Number of NB exclusions =        0   Total charge =  -10.00000
+  
+ CHARMM>       incr k by 1
+ Parameter: K <- "7"
+  
+ CHARMM>    if k .le. @ineg goto ilp
+ Parameter: INEG -> "   10"
+ Comparing "7" and "10".
+ IF test evaluated as true.  Performing command
+  
+ CHARMM>       define xcld sele ( @SOL ) .or. segid @negion end                     ! EXCLUDED SEGMENTS
+ Parameter: SOL -> ".NOT. SEGID BWAT"
+ Parameter: NEGION -> "CL"
+ SELRPN>    649 atoms have been selected out of   9034
+  
+ CHARMM>       define prox sele xcld .around. @MND end                              ! NEARBY EXCLUDED ATOMS
+ Parameter: MND -> "5.5"
+ SELRPN>   2090 atoms have been selected out of   9034
+  
+ CHARMM>       define list sele atom BWAT * OH2 .and. .not. prox end                ! WATERS NOT NEARBY
+ SELRPN>   2310 atoms have been selected out of   9034
+  
+ CHARMM>       calc in int( ?RAND * ?NSEL )                                         ! RANDOM INTEGER, BASED ON WATER COUNT
+ RDCMND substituted energy or value "?RAND" to "0.489585"
+ RDCMND substituted energy or value "?NSEL" to "2310"
+Evaluating: INT(0.489585*2310)
+ Parameter: IN <- "1130"
+  
+ CHARMM>       if in .lt. 1 set in ?NSEL                                            ! CHECK FOR ZERO, CHANGE TO MAX VALUE
+ RDCMND substituted energy or value "?NSEL" to "2310"
+ Comparing "1130" and "1".
+ IF test evaluated as false.  Skipping command
+  
+ CHARMM>       define targ sele list .subset. @IN end                               ! PICK WATER VIA RANDOM INDEX
+ Parameter: IN -> "1130"
+ SELRPN>      1 atoms have been selected out of   9034
+  
+ CHARMM>       coor stat sele targ end                                              ! GET OH2 ATOM COORDS, ASSIGN TO CHLORIDE
+ SELRPN>      1 atoms have been selected out of   9034
+ STATISTICS FOR         1 SELECTED ATOMS:
+    XMIN =    7.288771 XMAX =    7.288771 XAVE =    7.288771
+    YMIN =   19.725667 YMAX =   19.725667 YAVE =   19.725667
+    ZMIN =  -12.166951 ZMAX =  -12.166951 ZAVE =  -12.166951
+    WMIN =    0.000000 WMAX =    0.000000 WAVE =    0.000000
+  
+ CHARMM>       coor set xdir ?XAVE ydir ?YAVE zdir ?ZAVE sele atom @negion @K @nneg end
+ Parameter: NEGION -> "CL"
+ Parameter: K -> "7"
+ Parameter: NNEG -> "CLA"
+ RDCMND substituted energy or value "?XAVE" to "7.28877"
+ RDCMND substituted energy or value "?YAVE" to "19.7257"
+ RDCMND substituted energy or value "?ZAVE" to "-12.167"
+ SELRPN>      1 atoms have been selected out of   9034
+ SELECTED COORDINATES SET IN THE MAIN SET.
+
+  
+ CHARMM>       delete atom sele .byres. targ end sort                               ! REMOVE THE WATER MOLECULE
+ SELRPN>      3 atoms have been selected out of   9034
+
+ Message from MAPIC: Atom numbers are changed.
+
+ Message from MAPIC:          1 residues deleted.
+ DELTIC:         3 bonds deleted
+ DELTIC:         1 angles deleted
+ DELTIC:         1 acceptors deleted
+ PSFSUM> PSF modified: NONBOND lists and IMAGE atoms cleared.
+ PSFSUM> Summary of the structure file counters :
+         Number of segments      =        3   Number of residues   =     2850
+         Number of atoms         =     9031   Number of groups     =     2999
+         Number of bonds         =     9030   Number of angles     =     3960
+         Number of dihedrals     =     1705   Number of impropers  =      107
+         Number of cross-terms   =       44
+         Number of HB acceptors  =     2859   Number of HB donors  =       71
+         Number of NB exclusions =        0   Total charge =  -10.00000
+  
+ CHARMM>       incr k by 1
+ Parameter: K <- "8"
+  
+ CHARMM>    if k .le. @ineg goto ilp
+ Parameter: INEG -> "   10"
+ Comparing "8" and "10".
+ IF test evaluated as true.  Performing command
+  
+ CHARMM>       define xcld sele ( @SOL ) .or. segid @negion end                     ! EXCLUDED SEGMENTS
+ Parameter: SOL -> ".NOT. SEGID BWAT"
+ Parameter: NEGION -> "CL"
+ SELRPN>    649 atoms have been selected out of   9031
+  
+ CHARMM>       define prox sele xcld .around. @MND end                              ! NEARBY EXCLUDED ATOMS
+ Parameter: MND -> "5.5"
+ SELRPN>   2138 atoms have been selected out of   9031
+  
+ CHARMM>       define list sele atom BWAT * OH2 .and. .not. prox end                ! WATERS NOT NEARBY
+ SELRPN>   2293 atoms have been selected out of   9031
+  
+ CHARMM>       calc in int( ?RAND * ?NSEL )                                         ! RANDOM INTEGER, BASED ON WATER COUNT
+ RDCMND substituted energy or value "?RAND" to "0.460587"
+ RDCMND substituted energy or value "?NSEL" to "2293"
+Evaluating: INT(0.460587*2293)
+ Parameter: IN <- "1056"
+  
+ CHARMM>       if in .lt. 1 set in ?NSEL                                            ! CHECK FOR ZERO, CHANGE TO MAX VALUE
+ RDCMND substituted energy or value "?NSEL" to "2293"
+ Comparing "1056" and "1".
+ IF test evaluated as false.  Skipping command
+  
+ CHARMM>       define targ sele list .subset. @IN end                               ! PICK WATER VIA RANDOM INDEX
+ Parameter: IN -> "1056"
+ SELRPN>      1 atoms have been selected out of   9031
+  
+ CHARMM>       coor stat sele targ end                                              ! GET OH2 ATOM COORDS, ASSIGN TO CHLORIDE
+ SELRPN>      1 atoms have been selected out of   9031
+ STATISTICS FOR         1 SELECTED ATOMS:
+    XMIN =   -3.347142 XMAX =   -3.347142 XAVE =   -3.347142
+    YMIN =   24.219022 YMAX =   24.219022 YAVE =   24.219022
+    ZMIN =  -13.858535 ZMAX =  -13.858535 ZAVE =  -13.858535
+    WMIN =    0.000000 WMAX =    0.000000 WAVE =    0.000000
+  
+ CHARMM>       coor set xdir ?XAVE ydir ?YAVE zdir ?ZAVE sele atom @negion @K @nneg end
+ Parameter: NEGION -> "CL"
+ Parameter: K -> "8"
+ Parameter: NNEG -> "CLA"
+ RDCMND substituted energy or value "?XAVE" to "-3.34714"
+ RDCMND substituted energy or value "?YAVE" to "24.219"
+ RDCMND substituted energy or value "?ZAVE" to "-13.8585"
+ SELRPN>      1 atoms have been selected out of   9031
+ SELECTED COORDINATES SET IN THE MAIN SET.
+
+  
+ CHARMM>       delete atom sele .byres. targ end sort                               ! REMOVE THE WATER MOLECULE
+ SELRPN>      3 atoms have been selected out of   9031
+
+ Message from MAPIC: Atom numbers are changed.
+
+ Message from MAPIC:          1 residues deleted.
+ DELTIC:         3 bonds deleted
+ DELTIC:         1 angles deleted
+ DELTIC:         1 acceptors deleted
+ PSFSUM> PSF modified: NONBOND lists and IMAGE atoms cleared.
+ PSFSUM> Summary of the structure file counters :
+         Number of segments      =        3   Number of residues   =     2849
+         Number of atoms         =     9028   Number of groups     =     2998
+         Number of bonds         =     9027   Number of angles     =     3959
+         Number of dihedrals     =     1705   Number of impropers  =      107
+         Number of cross-terms   =       44
+         Number of HB acceptors  =     2858   Number of HB donors  =       71
+         Number of NB exclusions =        0   Total charge =  -10.00000
+  
+ CHARMM>       incr k by 1
+ Parameter: K <- "9"
+  
+ CHARMM>    if k .le. @ineg goto ilp
+ Parameter: INEG -> "   10"
+ Comparing "9" and "10".
+ IF test evaluated as true.  Performing command
+  
+ CHARMM>       define xcld sele ( @SOL ) .or. segid @negion end                     ! EXCLUDED SEGMENTS
+ Parameter: SOL -> ".NOT. SEGID BWAT"
+ Parameter: NEGION -> "CL"
+ SELRPN>    649 atoms have been selected out of   9028
+  
+ CHARMM>       define prox sele xcld .around. @MND end                              ! NEARBY EXCLUDED ATOMS
+ Parameter: MND -> "5.5"
+ SELRPN>   2179 atoms have been selected out of   9028
+  
+ CHARMM>       define list sele atom BWAT * OH2 .and. .not. prox end                ! WATERS NOT NEARBY
+ SELRPN>   2278 atoms have been selected out of   9028
+  
+ CHARMM>       calc in int( ?RAND * ?NSEL )                                         ! RANDOM INTEGER, BASED ON WATER COUNT
+ RDCMND substituted energy or value "?RAND" to "7.956122E-02"
+ RDCMND substituted energy or value "?NSEL" to "2278"
+Evaluating: INT(7.956122E-02*2278)
+ Parameter: IN <- "181"
+  
+ CHARMM>       if in .lt. 1 set in ?NSEL                                            ! CHECK FOR ZERO, CHANGE TO MAX VALUE
+ RDCMND substituted energy or value "?NSEL" to "2278"
+ Comparing "181" and "1".
+ IF test evaluated as false.  Skipping command
+  
+ CHARMM>       define targ sele list .subset. @IN end                               ! PICK WATER VIA RANDOM INDEX
+ Parameter: IN -> "181"
+ SELRPN>      1 atoms have been selected out of   9028
+  
+ CHARMM>       coor stat sele targ end                                              ! GET OH2 ATOM COORDS, ASSIGN TO CHLORIDE
+ SELRPN>      1 atoms have been selected out of   9028
+ STATISTICS FOR         1 SELECTED ATOMS:
+    XMIN =    5.602729 XMAX =    5.602729 XAVE =    5.602729
+    YMIN =    6.374893 YMAX =    6.374893 YAVE =    6.374893
+    ZMIN =  -26.053287 ZMAX =  -26.053287 ZAVE =  -26.053287
+    WMIN =    0.000000 WMAX =    0.000000 WAVE =    0.000000
+  
+ CHARMM>       coor set xdir ?XAVE ydir ?YAVE zdir ?ZAVE sele atom @negion @K @nneg end
+ Parameter: NEGION -> "CL"
+ Parameter: K -> "9"
+ Parameter: NNEG -> "CLA"
+ RDCMND substituted energy or value "?XAVE" to "5.60273"
+ RDCMND substituted energy or value "?YAVE" to "6.37489"
+ RDCMND substituted energy or value "?ZAVE" to "-26.0533"
+ SELRPN>      1 atoms have been selected out of   9028
+ SELECTED COORDINATES SET IN THE MAIN SET.
+
+  
+ CHARMM>       delete atom sele .byres. targ end sort                               ! REMOVE THE WATER MOLECULE
+ SELRPN>      3 atoms have been selected out of   9028
+
+ Message from MAPIC: Atom numbers are changed.
+
+ Message from MAPIC:          1 residues deleted.
+ DELTIC:         3 bonds deleted
+ DELTIC:         1 angles deleted
+ DELTIC:         1 acceptors deleted
+ PSFSUM> PSF modified: NONBOND lists and IMAGE atoms cleared.
+ PSFSUM> Summary of the structure file counters :
+         Number of segments      =        3   Number of residues   =     2848
+         Number of atoms         =     9025   Number of groups     =     2997
+         Number of bonds         =     9024   Number of angles     =     3958
+         Number of dihedrals     =     1705   Number of impropers  =      107
+         Number of cross-terms   =       44
+         Number of HB acceptors  =     2857   Number of HB donors  =       71
+         Number of NB exclusions =        0   Total charge =  -10.00000
+  
+ CHARMM>       incr k by 1
+ Parameter: K <- "10"
+  
+ CHARMM>    if k .le. @ineg goto ilp
+ Parameter: INEG -> "   10"
+ Comparing "10" and "10".
+ IF test evaluated as true.  Performing command
+  
+ CHARMM>       define xcld sele ( @SOL ) .or. segid @negion end                     ! EXCLUDED SEGMENTS
+ Parameter: SOL -> ".NOT. SEGID BWAT"
+ Parameter: NEGION -> "CL"
+ SELRPN>    649 atoms have been selected out of   9025
+  
+ CHARMM>       define prox sele xcld .around. @MND end                              ! NEARBY EXCLUDED ATOMS
+ Parameter: MND -> "5.5"
+ SELRPN>   2216 atoms have been selected out of   9025
+  
+ CHARMM>       define list sele atom BWAT * OH2 .and. .not. prox end                ! WATERS NOT NEARBY
+ SELRPN>   2265 atoms have been selected out of   9025
+  
+ CHARMM>       calc in int( ?RAND * ?NSEL )                                         ! RANDOM INTEGER, BASED ON WATER COUNT
+ RDCMND substituted energy or value "?RAND" to "0.185496"
+ RDCMND substituted energy or value "?NSEL" to "2265"
+Evaluating: INT(0.185496*2265)
+ Parameter: IN <- "420"
+  
+ CHARMM>       if in .lt. 1 set in ?NSEL                                            ! CHECK FOR ZERO, CHANGE TO MAX VALUE
+ RDCMND substituted energy or value "?NSEL" to "2265"
+ Comparing "420" and "1".
+ IF test evaluated as false.  Skipping command
+  
+ CHARMM>       define targ sele list .subset. @IN end                               ! PICK WATER VIA RANDOM INDEX
+ Parameter: IN -> "420"
+ SELRPN>      1 atoms have been selected out of   9025
+  
+ CHARMM>       coor stat sele targ end                                              ! GET OH2 ATOM COORDS, ASSIGN TO CHLORIDE
+ SELRPN>      1 atoms have been selected out of   9025
+ STATISTICS FOR         1 SELECTED ATOMS:
+    XMIN =  -16.929789 XMAX =  -16.929789 XAVE =  -16.929789
+    YMIN =   -9.768394 YMAX =   -9.768394 YAVE =   -9.768394
+    ZMIN =  -17.452362 ZMAX =  -17.452362 ZAVE =  -17.452362
+    WMIN =    0.000000 WMAX =    0.000000 WAVE =    0.000000
+  
+ CHARMM>       coor set xdir ?XAVE ydir ?YAVE zdir ?ZAVE sele atom @negion @K @nneg end
+ Parameter: NEGION -> "CL"
+ Parameter: K -> "10"
+ Parameter: NNEG -> "CLA"
+ RDCMND substituted energy or value "?XAVE" to "-16.9298"
+ RDCMND substituted energy or value "?YAVE" to "-9.76839"
+ RDCMND substituted energy or value "?ZAVE" to "-17.4524"
+ SELRPN>      1 atoms have been selected out of   9025
+ SELECTED COORDINATES SET IN THE MAIN SET.
+
+  
+ CHARMM>       delete atom sele .byres. targ end sort                               ! REMOVE THE WATER MOLECULE
+ SELRPN>      3 atoms have been selected out of   9025
+
+ Message from MAPIC: Atom numbers are changed.
+
+ Message from MAPIC:          1 residues deleted.
+ DELTIC:         3 bonds deleted
+ DELTIC:         1 angles deleted
+ DELTIC:         1 acceptors deleted
+ PSFSUM> PSF modified: NONBOND lists and IMAGE atoms cleared.
+ PSFSUM> Summary of the structure file counters :
+         Number of segments      =        3   Number of residues   =     2847
+         Number of atoms         =     9022   Number of groups     =     2996
+         Number of bonds         =     9021   Number of angles     =     3957
+         Number of dihedrals     =     1705   Number of impropers  =      107
+         Number of cross-terms   =       44
+         Number of HB acceptors  =     2856   Number of HB donors  =       71
+         Number of NB exclusions =        0   Total charge =  -10.00000
+  
+ CHARMM>       incr k by 1
+ Parameter: K <- "11"
+  
+ CHARMM>    if k .le. @ineg goto ilp
+ Parameter: INEG -> "   10"
+ Comparing "11" and "10".
+ IF test evaluated as false.  Skipping command
+  
+ CHARMM>     
+  
+ CHARMM>    ! INITIALIZE POTASSIUMS, REPEAT ABOVE PROCESS
+ CHARMM>    read sequ @npos @ipos
+ Parameter: NPOS -> "POT"
+ Parameter: IPOS -> "   10"
+  
+ CHARMM>    generate @posion noang nodihe first none last none
+ Parameter: POSION -> "POT"
+ NO PATCHING WILL BE DONE ON THE FIRST RESIDUE
+ NO PATCHING WILL BE DONE ON THE LAST  RESIDUE
+ GENPSF> Segment   4 has been generated. Its identifier is POT.
+ PSFSUM> PSF modified: NONBOND lists and IMAGE atoms cleared.
+ PSFSUM> Summary of the structure file counters :
+         Number of segments      =        4   Number of residues   =     2857
+         Number of atoms         =     9032   Number of groups     =     3006
+         Number of bonds         =     9021   Number of angles     =     3957
+         Number of dihedrals     =     1705   Number of impropers  =      107
+         Number of cross-terms   =       44
+         Number of HB acceptors  =     2856   Number of HB donors  =       71
+         Number of NB exclusions =        0   Total charge =    0.00000
+  
+ CHARMM>    coor set xdir 0.0 ydir 0.0 zdir 0.0 sele segid @posion end
+ Parameter: POSION -> "POT"
+ SELRPN>     10 atoms have been selected out of   9032
+ SELECTED COORDINATES SET IN THE MAIN SET.
+
+  
+ CHARMM>     
+  
+ CHARMM>    ! NOTE THAT BOTH SEGID CL AND SEGID K ARE 'EXCLUDED'
+ CHARMM>    ! NEARBY WATERS ARE REALLY EXCLUDED; REPLACE ONLY 'BULK' WATERS
+ CHARMM>    set k 1
+ Parameter: K <- "1"
+  
+ CHARMM>    label klp
+  
+ CHARMM>       define xcld sele ( @SOL ) .or. segid @negion .or. segid @posion end
+ Parameter: SOL -> ".NOT. SEGID BWAT"
+ Parameter: NEGION -> "CL"
+ Parameter: POSION -> "POT"
+ SELRPN>    659 atoms have been selected out of   9032
+  
+ CHARMM>       define prox sele xcld .around. @MND end
+ Parameter: MND -> "5.5"
+ SELRPN>   2291 atoms have been selected out of   9032
+  
+ CHARMM>       define list sele atom BWAT * OH2 .and. .not. prox end
+ SELRPN>   2242 atoms have been selected out of   9032
+  
+ CHARMM>       calc in int( ?RAND * ?NSEL )
+ RDCMND substituted energy or value "?RAND" to "0.629162"
+ RDCMND substituted energy or value "?NSEL" to "2242"
+Evaluating: INT(0.629162*2242)
+ Parameter: IN <- "1410"
+  
+ CHARMM>       if in .lt. 1 set in ?NSEL
+ RDCMND substituted energy or value "?NSEL" to "2242"
+ Comparing "1410" and "1".
+ IF test evaluated as false.  Skipping command
+  
+ CHARMM>       define targ sele list .subset. @IN end
+ Parameter: IN -> "1410"
+ SELRPN>      1 atoms have been selected out of   9032
+  
+ CHARMM>       coor stat sele targ end
+ SELRPN>      1 atoms have been selected out of   9032
+ STATISTICS FOR         1 SELECTED ATOMS:
+    XMIN =   13.501152 XMAX =   13.501152 XAVE =   13.501152
+    YMIN =  -13.968972 YMAX =  -13.968972 YAVE =  -13.968972
+    ZMIN =   14.791787 ZMAX =   14.791787 ZAVE =   14.791787
+    WMIN =    0.000000 WMAX =    0.000000 WAVE =    0.000000
+  
+ CHARMM>       coor set xdir ?XAVE ydir ?YAVE zdir ?ZAVE sele atom @posion @K @npos end
+ Parameter: POSION -> "POT"
+ Parameter: K -> "1"
+ Parameter: NPOS -> "POT"
+ RDCMND substituted energy or value "?XAVE" to "13.5012"
+ RDCMND substituted energy or value "?YAVE" to "-13.969"
+ RDCMND substituted energy or value "?ZAVE" to "14.7918"
+ SELRPN>      1 atoms have been selected out of   9032
+ SELECTED COORDINATES SET IN THE MAIN SET.
+
+  
+ CHARMM>       delete atom sele .byres. targ end sort
+ SELRPN>      3 atoms have been selected out of   9032
+
+ Message from MAPIC: Atom numbers are changed.
+
+ Message from MAPIC:          1 residues deleted.
+ DELTIC:         3 bonds deleted
+ DELTIC:         1 angles deleted
+ DELTIC:         1 acceptors deleted
+ PSFSUM> PSF modified: NONBOND lists and IMAGE atoms cleared.
+ PSFSUM> Summary of the structure file counters :
+         Number of segments      =        4   Number of residues   =     2856
+         Number of atoms         =     9029   Number of groups     =     3005
+         Number of bonds         =     9018   Number of angles     =     3956
+         Number of dihedrals     =     1705   Number of impropers  =      107
+         Number of cross-terms   =       44
+         Number of HB acceptors  =     2855   Number of HB donors  =       71
+         Number of NB exclusions =        0   Total charge =    0.00000
+  
+ CHARMM>       incr k by 1
+ Parameter: K <- "2"
+  
+ CHARMM>    if k .le. @ipos goto klp
+ Parameter: IPOS -> "   10"
+ Comparing "2" and "10".
+ IF test evaluated as true.  Performing command
+  
+ CHARMM>       define xcld sele ( @SOL ) .or. segid @negion .or. segid @posion end
+ Parameter: SOL -> ".NOT. SEGID BWAT"
+ Parameter: NEGION -> "CL"
+ Parameter: POSION -> "POT"
+ SELRPN>    659 atoms have been selected out of   9029
+  
+ CHARMM>       define prox sele xcld .around. @MND end
+ Parameter: MND -> "5.5"
+ SELRPN>   2321 atoms have been selected out of   9029
+  
+ CHARMM>       define list sele atom BWAT * OH2 .and. .not. prox end
+ SELRPN>   2231 atoms have been selected out of   9029
+  
+ CHARMM>       calc in int( ?RAND * ?NSEL )
+ RDCMND substituted energy or value "?RAND" to "0.328032"
+ RDCMND substituted energy or value "?NSEL" to "2231"
+Evaluating: INT(0.328032*2231)
+ Parameter: IN <- "731"
+  
+ CHARMM>       if in .lt. 1 set in ?NSEL
+ RDCMND substituted energy or value "?NSEL" to "2231"
+ Comparing "731" and "1".
+ IF test evaluated as false.  Skipping command
+  
+ CHARMM>       define targ sele list .subset. @IN end
+ Parameter: IN -> "731"
+ SELRPN>      1 atoms have been selected out of   9029
+  
+ CHARMM>       coor stat sele targ end
+ SELRPN>      1 atoms have been selected out of   9029
+ STATISTICS FOR         1 SELECTED ATOMS:
+    XMIN =   -9.285723 XMAX =   -9.285723 XAVE =   -9.285723
+    YMIN =   14.636108 YMAX =   14.636108 YAVE =   14.636108
+    ZMIN =   -3.889048 ZMAX =   -3.889048 ZAVE =   -3.889048
+    WMIN =    0.000000 WMAX =    0.000000 WAVE =    0.000000
+  
+ CHARMM>       coor set xdir ?XAVE ydir ?YAVE zdir ?ZAVE sele atom @posion @K @npos end
+ Parameter: POSION -> "POT"
+ Parameter: K -> "2"
+ Parameter: NPOS -> "POT"
+ RDCMND substituted energy or value "?XAVE" to "-9.28572"
+ RDCMND substituted energy or value "?YAVE" to "14.6361"
+ RDCMND substituted energy or value "?ZAVE" to "-3.88905"
+ SELRPN>      1 atoms have been selected out of   9029
+ SELECTED COORDINATES SET IN THE MAIN SET.
+
+  
+ CHARMM>       delete atom sele .byres. targ end sort
+ SELRPN>      3 atoms have been selected out of   9029
+
+ Message from MAPIC: Atom numbers are changed.
+
+ Message from MAPIC:          1 residues deleted.
+ DELTIC:         3 bonds deleted
+ DELTIC:         1 angles deleted
+ DELTIC:         1 acceptors deleted
+ PSFSUM> PSF modified: NONBOND lists and IMAGE atoms cleared.
+ PSFSUM> Summary of the structure file counters :
+         Number of segments      =        4   Number of residues   =     2855
+         Number of atoms         =     9026   Number of groups     =     3004
+         Number of bonds         =     9015   Number of angles     =     3955
+         Number of dihedrals     =     1705   Number of impropers  =      107
+         Number of cross-terms   =       44
+         Number of HB acceptors  =     2854   Number of HB donors  =       71
+         Number of NB exclusions =        0   Total charge =    0.00000
+  
+ CHARMM>       incr k by 1
+ Parameter: K <- "3"
+  
+ CHARMM>    if k .le. @ipos goto klp
+ Parameter: IPOS -> "   10"
+ Comparing "3" and "10".
+ IF test evaluated as true.  Performing command
+  
+ CHARMM>       define xcld sele ( @SOL ) .or. segid @negion .or. segid @posion end
+ Parameter: SOL -> ".NOT. SEGID BWAT"
+ Parameter: NEGION -> "CL"
+ Parameter: POSION -> "POT"
+ SELRPN>    659 atoms have been selected out of   9026
+  
+ CHARMM>       define prox sele xcld .around. @MND end
+ Parameter: MND -> "5.5"
+ SELRPN>   2356 atoms have been selected out of   9026
+  
+ CHARMM>       define list sele atom BWAT * OH2 .and. .not. prox end
+ SELRPN>   2217 atoms have been selected out of   9026
+  
+ CHARMM>       calc in int( ?RAND * ?NSEL )
+ RDCMND substituted energy or value "?RAND" to "0.242169"
+ RDCMND substituted energy or value "?NSEL" to "2217"
+Evaluating: INT(0.242169*2217)
+ Parameter: IN <- "536"
+  
+ CHARMM>       if in .lt. 1 set in ?NSEL
+ RDCMND substituted energy or value "?NSEL" to "2217"
+ Comparing "536" and "1".
+ IF test evaluated as false.  Skipping command
+  
+ CHARMM>       define targ sele list .subset. @IN end
+ Parameter: IN -> "536"
+ SELRPN>      1 atoms have been selected out of   9026
+  
+ CHARMM>       coor stat sele targ end
+ SELRPN>      1 atoms have been selected out of   9026
+ STATISTICS FOR         1 SELECTED ATOMS:
+    XMIN =    1.926200 XMAX =    1.926200 XAVE =    1.926200
+    YMIN =   -9.768371 YMAX =   -9.768371 YAVE =   -9.768371
+    ZMIN =  -17.452394 ZMAX =  -17.452394 ZAVE =  -17.452394
+    WMIN =    0.000000 WMAX =    0.000000 WAVE =    0.000000
+  
+ CHARMM>       coor set xdir ?XAVE ydir ?YAVE zdir ?ZAVE sele atom @posion @K @npos end
+ Parameter: POSION -> "POT"
+ Parameter: K -> "3"
+ Parameter: NPOS -> "POT"
+ RDCMND substituted energy or value "?XAVE" to "1.9262"
+ RDCMND substituted energy or value "?YAVE" to "-9.76837"
+ RDCMND substituted energy or value "?ZAVE" to "-17.4524"
+ SELRPN>      1 atoms have been selected out of   9026
+ SELECTED COORDINATES SET IN THE MAIN SET.
+
+  
+ CHARMM>       delete atom sele .byres. targ end sort
+ SELRPN>      3 atoms have been selected out of   9026
+
+ Message from MAPIC: Atom numbers are changed.
+
+ Message from MAPIC:          1 residues deleted.
+ DELTIC:         3 bonds deleted
+ DELTIC:         1 angles deleted
+ DELTIC:         1 acceptors deleted
+ PSFSUM> PSF modified: NONBOND lists and IMAGE atoms cleared.
+ PSFSUM> Summary of the structure file counters :
+         Number of segments      =        4   Number of residues   =     2854
+         Number of atoms         =     9023   Number of groups     =     3003
+         Number of bonds         =     9012   Number of angles     =     3954
+         Number of dihedrals     =     1705   Number of impropers  =      107
+         Number of cross-terms   =       44
+         Number of HB acceptors  =     2853   Number of HB donors  =       71
+         Number of NB exclusions =        0   Total charge =    0.00000
+  
+ CHARMM>       incr k by 1
+ Parameter: K <- "4"
+  
+ CHARMM>    if k .le. @ipos goto klp
+ Parameter: IPOS -> "   10"
+ Comparing "4" and "10".
+ IF test evaluated as true.  Performing command
+  
+ CHARMM>       define xcld sele ( @SOL ) .or. segid @negion .or. segid @posion end
+ Parameter: SOL -> ".NOT. SEGID BWAT"
+ Parameter: NEGION -> "CL"
+ Parameter: POSION -> "POT"
+ SELRPN>    659 atoms have been selected out of   9023
+  
+ CHARMM>       define prox sele xcld .around. @MND end
+ Parameter: MND -> "5.5"
+ SELRPN>   2421 atoms have been selected out of   9023
+  
+ CHARMM>       define list sele atom BWAT * OH2 .and. .not. prox end
+ SELRPN>   2194 atoms have been selected out of   9023
+  
+ CHARMM>       calc in int( ?RAND * ?NSEL )
+ RDCMND substituted energy or value "?RAND" to "0.139671"
+ RDCMND substituted energy or value "?NSEL" to "2194"
+Evaluating: INT(0.139671*2194)
+ Parameter: IN <- "306"
+  
+ CHARMM>       if in .lt. 1 set in ?NSEL
+ RDCMND substituted energy or value "?NSEL" to "2194"
+ Comparing "306" and "1".
+ IF test evaluated as false.  Skipping command
+  
+ CHARMM>       define targ sele list .subset. @IN end
+ Parameter: IN -> "306"
+ SELRPN>      1 atoms have been selected out of   9023
+  
+ CHARMM>       coor stat sele targ end
+ SELRPN>      1 atoms have been selected out of   9023
+ STATISTICS FOR         1 SELECTED ATOMS:
+    XMIN =  -21.889948 XMAX =  -21.889948 XAVE =  -21.889948
+    YMIN =   -8.311104 YMAX =   -8.311104 YAVE =   -8.311104
+    ZMIN =   -6.426730 ZMAX =   -6.426730 ZAVE =   -6.426730
+    WMIN =    0.000000 WMAX =    0.000000 WAVE =    0.000000
+  
+ CHARMM>       coor set xdir ?XAVE ydir ?YAVE zdir ?ZAVE sele atom @posion @K @npos end
+ Parameter: POSION -> "POT"
+ Parameter: K -> "4"
+ Parameter: NPOS -> "POT"
+ RDCMND substituted energy or value "?XAVE" to "-21.8899"
+ RDCMND substituted energy or value "?YAVE" to "-8.3111"
+ RDCMND substituted energy or value "?ZAVE" to "-6.42673"
+ SELRPN>      1 atoms have been selected out of   9023
+ SELECTED COORDINATES SET IN THE MAIN SET.
+
+  
+ CHARMM>       delete atom sele .byres. targ end sort
+ SELRPN>      3 atoms have been selected out of   9023
+
+ Message from MAPIC: Atom numbers are changed.
+
+ Message from MAPIC:          1 residues deleted.
+ DELTIC:         3 bonds deleted
+ DELTIC:         1 angles deleted
+ DELTIC:         1 acceptors deleted
+ PSFSUM> PSF modified: NONBOND lists and IMAGE atoms cleared.
+ PSFSUM> Summary of the structure file counters :
+         Number of segments      =        4   Number of residues   =     2853
+         Number of atoms         =     9020   Number of groups     =     3002
+         Number of bonds         =     9009   Number of angles     =     3953
+         Number of dihedrals     =     1705   Number of impropers  =      107
+         Number of cross-terms   =       44
+         Number of HB acceptors  =     2852   Number of HB donors  =       71
+         Number of NB exclusions =        0   Total charge =    0.00000
+  
+ CHARMM>       incr k by 1
+ Parameter: K <- "5"
+  
+ CHARMM>    if k .le. @ipos goto klp
+ Parameter: IPOS -> "   10"
+ Comparing "5" and "10".
+ IF test evaluated as true.  Performing command
+  
+ CHARMM>       define xcld sele ( @SOL ) .or. segid @negion .or. segid @posion end
+ Parameter: SOL -> ".NOT. SEGID BWAT"
+ Parameter: NEGION -> "CL"
+ Parameter: POSION -> "POT"
+ SELRPN>    659 atoms have been selected out of   9020
+  
+ CHARMM>       define prox sele xcld .around. @MND end
+ Parameter: MND -> "5.5"
+ SELRPN>   2473 atoms have been selected out of   9020
+  
+ CHARMM>       define list sele atom BWAT * OH2 .and. .not. prox end
+ SELRPN>   2176 atoms have been selected out of   9020
+  
+ CHARMM>       calc in int( ?RAND * ?NSEL )
+ RDCMND substituted energy or value "?RAND" to "0.453804"
+ RDCMND substituted energy or value "?NSEL" to "2176"
+Evaluating: INT(0.453804*2176)
+ Parameter: IN <- "987"
+  
+ CHARMM>       if in .lt. 1 set in ?NSEL
+ RDCMND substituted energy or value "?NSEL" to "2176"
+ Comparing "987" and "1".
+ IF test evaluated as false.  Skipping command
+  
+ CHARMM>       define targ sele list .subset. @IN end
+ Parameter: IN -> "987"
+ SELRPN>      1 atoms have been selected out of   9020
+  
+ CHARMM>       coor stat sele targ end
+ SELRPN>      1 atoms have been selected out of   9020
+ STATISTICS FOR         1 SELECTED ATOMS:
+    XMIN =    2.037801 XMAX =    2.037801 XAVE =    2.037801
+    YMIN =   27.478812 YMAX =   27.478812 YAVE =   27.478812
+    ZMIN =   -1.405199 ZMAX =   -1.405199 ZAVE =   -1.405199
+    WMIN =    0.000000 WMAX =    0.000000 WAVE =    0.000000
+  
+ CHARMM>       coor set xdir ?XAVE ydir ?YAVE zdir ?ZAVE sele atom @posion @K @npos end
+ Parameter: POSION -> "POT"
+ Parameter: K -> "5"
+ Parameter: NPOS -> "POT"
+ RDCMND substituted energy or value "?XAVE" to "2.0378"
+ RDCMND substituted energy or value "?YAVE" to "27.4788"
+ RDCMND substituted energy or value "?ZAVE" to "-1.4052"
+ SELRPN>      1 atoms have been selected out of   9020
+ SELECTED COORDINATES SET IN THE MAIN SET.
+
+  
+ CHARMM>       delete atom sele .byres. targ end sort
+ SELRPN>      3 atoms have been selected out of   9020
+
+ Message from MAPIC: Atom numbers are changed.
+
+ Message from MAPIC:          1 residues deleted.
+ DELTIC:         3 bonds deleted
+ DELTIC:         1 angles deleted
+ DELTIC:         1 acceptors deleted
+ PSFSUM> PSF modified: NONBOND lists and IMAGE atoms cleared.
+ PSFSUM> Summary of the structure file counters :
+         Number of segments      =        4   Number of residues   =     2852
+         Number of atoms         =     9017   Number of groups     =     3001
+         Number of bonds         =     9006   Number of angles     =     3952
+         Number of dihedrals     =     1705   Number of impropers  =      107
+         Number of cross-terms   =       44
+         Number of HB acceptors  =     2851   Number of HB donors  =       71
+         Number of NB exclusions =        0   Total charge =    0.00000
+  
+ CHARMM>       incr k by 1
+ Parameter: K <- "6"
+  
+ CHARMM>    if k .le. @ipos goto klp
+ Parameter: IPOS -> "   10"
+ Comparing "6" and "10".
+ IF test evaluated as true.  Performing command
+  
+ CHARMM>       define xcld sele ( @SOL ) .or. segid @negion .or. segid @posion end
+ Parameter: SOL -> ".NOT. SEGID BWAT"
+ Parameter: NEGION -> "CL"
+ Parameter: POSION -> "POT"
+ SELRPN>    659 atoms have been selected out of   9017
+  
+ CHARMM>       define prox sele xcld .around. @MND end
+ Parameter: MND -> "5.5"
+ SELRPN>   2505 atoms have been selected out of   9017
+  
+ CHARMM>       define list sele atom BWAT * OH2 .and. .not. prox end
+ SELRPN>   2165 atoms have been selected out of   9017
+  
+ CHARMM>       calc in int( ?RAND * ?NSEL )
+ RDCMND substituted energy or value "?RAND" to "8.303798E-02"
+ RDCMND substituted energy or value "?NSEL" to "2165"
+Evaluating: INT(8.303798E-02*2165)
+ Parameter: IN <- "179"
+  
+ CHARMM>       if in .lt. 1 set in ?NSEL
+ RDCMND substituted energy or value "?NSEL" to "2165"
+ Comparing "179" and "1".
+ IF test evaluated as false.  Skipping command
+  
+ CHARMM>       define targ sele list .subset. @IN end
+ Parameter: IN -> "179"
+ SELRPN>      1 atoms have been selected out of   9017
+  
+ CHARMM>       coor stat sele targ end
+ SELRPN>      1 atoms have been selected out of   9017
+ STATISTICS FOR         1 SELECTED ATOMS:
+    XMIN =    4.804917 XMAX =    4.804917 XAVE =    4.804917
+    YMIN =    6.185889 YMAX =    6.185889 YAVE =    6.185889
+    ZMIN =  -19.896864 ZMAX =  -19.896864 ZAVE =  -19.896864
+    WMIN =    0.000000 WMAX =    0.000000 WAVE =    0.000000
+  
+ CHARMM>       coor set xdir ?XAVE ydir ?YAVE zdir ?ZAVE sele atom @posion @K @npos end
+ Parameter: POSION -> "POT"
+ Parameter: K -> "6"
+ Parameter: NPOS -> "POT"
+ RDCMND substituted energy or value "?XAVE" to "4.80492"
+ RDCMND substituted energy or value "?YAVE" to "6.18589"
+ RDCMND substituted energy or value "?ZAVE" to "-19.8969"
+ SELRPN>      1 atoms have been selected out of   9017
+ SELECTED COORDINATES SET IN THE MAIN SET.
+
+  
+ CHARMM>       delete atom sele .byres. targ end sort
+ SELRPN>      3 atoms have been selected out of   9017
+
+ Message from MAPIC: Atom numbers are changed.
+
+ Message from MAPIC:          1 residues deleted.
+ DELTIC:         3 bonds deleted
+ DELTIC:         1 angles deleted
+ DELTIC:         1 acceptors deleted
+ PSFSUM> PSF modified: NONBOND lists and IMAGE atoms cleared.
+ PSFSUM> Summary of the structure file counters :
+         Number of segments      =        4   Number of residues   =     2851
+         Number of atoms         =     9014   Number of groups     =     3000
+         Number of bonds         =     9003   Number of angles     =     3951
+         Number of dihedrals     =     1705   Number of impropers  =      107
+         Number of cross-terms   =       44
+         Number of HB acceptors  =     2850   Number of HB donors  =       71
+         Number of NB exclusions =        0   Total charge =    0.00000
+  
+ CHARMM>       incr k by 1
+ Parameter: K <- "7"
+  
+ CHARMM>    if k .le. @ipos goto klp
+ Parameter: IPOS -> "   10"
+ Comparing "7" and "10".
+ IF test evaluated as true.  Performing command
+  
+ CHARMM>       define xcld sele ( @SOL ) .or. segid @negion .or. segid @posion end
+ Parameter: SOL -> ".NOT. SEGID BWAT"
+ Parameter: NEGION -> "CL"
+ Parameter: POSION -> "POT"
+ SELRPN>    659 atoms have been selected out of   9014
+  
+ CHARMM>       define prox sele xcld .around. @MND end
+ Parameter: MND -> "5.5"
+ SELRPN>   2557 atoms have been selected out of   9014
+  
+ CHARMM>       define list sele atom BWAT * OH2 .and. .not. prox end
+ SELRPN>   2147 atoms have been selected out of   9014
+  
+ CHARMM>       calc in int( ?RAND * ?NSEL )
+ RDCMND substituted energy or value "?RAND" to "0.619352"
+ RDCMND substituted energy or value "?NSEL" to "2147"
+Evaluating: INT(0.619352*2147)
+ Parameter: IN <- "1329"
+  
+ CHARMM>       if in .lt. 1 set in ?NSEL
+ RDCMND substituted energy or value "?NSEL" to "2147"
+ Comparing "1329" and "1".
+ IF test evaluated as false.  Skipping command
+  
+ CHARMM>       define targ sele list .subset. @IN end
+ Parameter: IN -> "1329"
+ SELRPN>      1 atoms have been selected out of   9014
+  
+ CHARMM>       coor stat sele targ end
+ SELRPN>      1 atoms have been selected out of   9014
+ STATISTICS FOR         1 SELECTED ATOMS:
+    XMIN =   12.140067 XMAX =   12.140067 XAVE =   12.140067
+    YMIN =  -12.398195 YMAX =  -12.398195 YAVE =  -12.398195
+    ZMIN =    8.201798 ZMAX =    8.201798 ZAVE =    8.201798
+    WMIN =    0.000000 WMAX =    0.000000 WAVE =    0.000000
+  
+ CHARMM>       coor set xdir ?XAVE ydir ?YAVE zdir ?ZAVE sele atom @posion @K @npos end
+ Parameter: POSION -> "POT"
+ Parameter: K -> "7"
+ Parameter: NPOS -> "POT"
+ RDCMND substituted energy or value "?XAVE" to "12.1401"
+ RDCMND substituted energy or value "?YAVE" to "-12.3982"
+ RDCMND substituted energy or value "?ZAVE" to "8.2018"
+ SELRPN>      1 atoms have been selected out of   9014
+ SELECTED COORDINATES SET IN THE MAIN SET.
+
+  
+ CHARMM>       delete atom sele .byres. targ end sort
+ SELRPN>      3 atoms have been selected out of   9014
+
+ Message from MAPIC: Atom numbers are changed.
+
+ Message from MAPIC:          1 residues deleted.
+ DELTIC:         3 bonds deleted
+ DELTIC:         1 angles deleted
+ DELTIC:         1 acceptors deleted
+ PSFSUM> PSF modified: NONBOND lists and IMAGE atoms cleared.
+ PSFSUM> Summary of the structure file counters :
+         Number of segments      =        4   Number of residues   =     2850
+         Number of atoms         =     9011   Number of groups     =     2999
+         Number of bonds         =     9000   Number of angles     =     3950
+         Number of dihedrals     =     1705   Number of impropers  =      107
+         Number of cross-terms   =       44
+         Number of HB acceptors  =     2849   Number of HB donors  =       71
+         Number of NB exclusions =        0   Total charge =    0.00000
+  
+ CHARMM>       incr k by 1
+ Parameter: K <- "8"
+  
+ CHARMM>    if k .le. @ipos goto klp
+ Parameter: IPOS -> "   10"
+ Comparing "8" and "10".
+ IF test evaluated as true.  Performing command
+  
+ CHARMM>       define xcld sele ( @SOL ) .or. segid @negion .or. segid @posion end
+ Parameter: SOL -> ".NOT. SEGID BWAT"
+ Parameter: NEGION -> "CL"
+ Parameter: POSION -> "POT"
+ SELRPN>    659 atoms have been selected out of   9011
+  
+ CHARMM>       define prox sele xcld .around. @MND end
+ Parameter: MND -> "5.5"
+ SELRPN>   2598 atoms have been selected out of   9011
+  
+ CHARMM>       define list sele atom BWAT * OH2 .and. .not. prox end
+ SELRPN>   2131 atoms have been selected out of   9011
+  
+ CHARMM>       calc in int( ?RAND * ?NSEL )
+ RDCMND substituted energy or value "?RAND" to "0.454482"
+ RDCMND substituted energy or value "?NSEL" to "2131"
+Evaluating: INT(0.454482*2131)
+ Parameter: IN <- "968"
+  
+ CHARMM>       if in .lt. 1 set in ?NSEL
+ RDCMND substituted energy or value "?NSEL" to "2131"
+ Comparing "968" and "1".
+ IF test evaluated as false.  Skipping command
+  
+ CHARMM>       define targ sele list .subset. @IN end
+ Parameter: IN -> "968"
+ SELRPN>      1 atoms have been selected out of   9011
+  
+ CHARMM>       coor stat sele targ end
+ SELRPN>      1 atoms have been selected out of   9011
+ STATISTICS FOR         1 SELECTED ATOMS:
+    XMIN =    8.808220 XMAX =    8.808220 XAVE =    8.808220
+    YMIN =   23.990974 YMAX =   23.990974 YAVE =   23.990974
+    ZMIN =   -1.464751 ZMAX =   -1.464751 ZAVE =   -1.464751
+    WMIN =    0.000000 WMAX =    0.000000 WAVE =    0.000000
+  
+ CHARMM>       coor set xdir ?XAVE ydir ?YAVE zdir ?ZAVE sele atom @posion @K @npos end
+ Parameter: POSION -> "POT"
+ Parameter: K -> "8"
+ Parameter: NPOS -> "POT"
+ RDCMND substituted energy or value "?XAVE" to "8.80822"
+ RDCMND substituted energy or value "?YAVE" to "23.991"
+ RDCMND substituted energy or value "?ZAVE" to "-1.46475"
+ SELRPN>      1 atoms have been selected out of   9011
+ SELECTED COORDINATES SET IN THE MAIN SET.
+
+  
+ CHARMM>       delete atom sele .byres. targ end sort
+ SELRPN>      3 atoms have been selected out of   9011
+
+ Message from MAPIC: Atom numbers are changed.
+
+ Message from MAPIC:          1 residues deleted.
+ DELTIC:         3 bonds deleted
+ DELTIC:         1 angles deleted
+ DELTIC:         1 acceptors deleted
+ PSFSUM> PSF modified: NONBOND lists and IMAGE atoms cleared.
+ PSFSUM> Summary of the structure file counters :
+         Number of segments      =        4   Number of residues   =     2849
+         Number of atoms         =     9008   Number of groups     =     2998
+         Number of bonds         =     8997   Number of angles     =     3949
+         Number of dihedrals     =     1705   Number of impropers  =      107
+         Number of cross-terms   =       44
+         Number of HB acceptors  =     2848   Number of HB donors  =       71
+         Number of NB exclusions =        0   Total charge =    0.00000
+  
+ CHARMM>       incr k by 1
+ Parameter: K <- "9"
+  
+ CHARMM>    if k .le. @ipos goto klp
+ Parameter: IPOS -> "   10"
+ Comparing "9" and "10".
+ IF test evaluated as true.  Performing command
+  
+ CHARMM>       define xcld sele ( @SOL ) .or. segid @negion .or. segid @posion end
+ Parameter: SOL -> ".NOT. SEGID BWAT"
+ Parameter: NEGION -> "CL"
+ Parameter: POSION -> "POT"
+ SELRPN>    659 atoms have been selected out of   9008
+  
+ CHARMM>       define prox sele xcld .around. @MND end
+ Parameter: MND -> "5.5"
+ SELRPN>   2638 atoms have been selected out of   9008
+  
+ CHARMM>       define list sele atom BWAT * OH2 .and. .not. prox end
+ SELRPN>   2117 atoms have been selected out of   9008
+  
+ CHARMM>       calc in int( ?RAND * ?NSEL )
+ RDCMND substituted energy or value "?RAND" to "0.477425"
+ RDCMND substituted energy or value "?NSEL" to "2117"
+Evaluating: INT(0.477425*2117)
+ Parameter: IN <- "1010"
+  
+ CHARMM>       if in .lt. 1 set in ?NSEL
+ RDCMND substituted energy or value "?NSEL" to "2117"
+ Comparing "1010" and "1".
+ IF test evaluated as false.  Skipping command
+  
+ CHARMM>       define targ sele list .subset. @IN end
+ Parameter: IN -> "1010"
+ SELRPN>      1 atoms have been selected out of   9008
+  
+ CHARMM>       coor stat sele targ end
+ SELRPN>      1 atoms have been selected out of   9008
+ STATISTICS FOR         1 SELECTED ATOMS:
+    XMIN =   -1.238854 XMAX =   -1.238854 XAVE =   -1.238854
+    YMIN =  -26.506055 YMAX =  -26.506055 YAVE =  -26.506055
+    ZMIN =    4.148118 ZMAX =    4.148118 ZAVE =    4.148118
+    WMIN =    0.000000 WMAX =    0.000000 WAVE =    0.000000
+  
+ CHARMM>       coor set xdir ?XAVE ydir ?YAVE zdir ?ZAVE sele atom @posion @K @npos end
+ Parameter: POSION -> "POT"
+ Parameter: K -> "9"
+ Parameter: NPOS -> "POT"
+ RDCMND substituted energy or value "?XAVE" to "-1.23885"
+ RDCMND substituted energy or value "?YAVE" to "-26.5061"
+ RDCMND substituted energy or value "?ZAVE" to "4.14812"
+ SELRPN>      1 atoms have been selected out of   9008
+ SELECTED COORDINATES SET IN THE MAIN SET.
+
+  
+ CHARMM>       delete atom sele .byres. targ end sort
+ SELRPN>      3 atoms have been selected out of   9008
+
+ Message from MAPIC: Atom numbers are changed.
+
+ Message from MAPIC:          1 residues deleted.
+ DELTIC:         3 bonds deleted
+ DELTIC:         1 angles deleted
+ DELTIC:         1 acceptors deleted
+ PSFSUM> PSF modified: NONBOND lists and IMAGE atoms cleared.
+ PSFSUM> Summary of the structure file counters :
+         Number of segments      =        4   Number of residues   =     2848
+         Number of atoms         =     9005   Number of groups     =     2997
+         Number of bonds         =     8994   Number of angles     =     3948
+         Number of dihedrals     =     1705   Number of impropers  =      107
+         Number of cross-terms   =       44
+         Number of HB acceptors  =     2847   Number of HB donors  =       71
+         Number of NB exclusions =        0   Total charge =    0.00000
+  
+ CHARMM>       incr k by 1
+ Parameter: K <- "10"
+  
+ CHARMM>    if k .le. @ipos goto klp
+ Parameter: IPOS -> "   10"
+ Comparing "10" and "10".
+ IF test evaluated as true.  Performing command
+  
+ CHARMM>       define xcld sele ( @SOL ) .or. segid @negion .or. segid @posion end
+ Parameter: SOL -> ".NOT. SEGID BWAT"
+ Parameter: NEGION -> "CL"
+ Parameter: POSION -> "POT"
+ SELRPN>    659 atoms have been selected out of   9005
+  
+ CHARMM>       define prox sele xcld .around. @MND end
+ Parameter: MND -> "5.5"
+ SELRPN>   2671 atoms have been selected out of   9005
+  
+ CHARMM>       define list sele atom BWAT * OH2 .and. .not. prox end
+ SELRPN>   2104 atoms have been selected out of   9005
+  
+ CHARMM>       calc in int( ?RAND * ?NSEL )
+ RDCMND substituted energy or value "?RAND" to "9.049659E-02"
+ RDCMND substituted energy or value "?NSEL" to "2104"
+Evaluating: INT(9.049659E-02*2104)
+ Parameter: IN <- "190"
+  
+ CHARMM>       if in .lt. 1 set in ?NSEL
+ RDCMND substituted energy or value "?NSEL" to "2104"
+ Comparing "190" and "1".
+ IF test evaluated as false.  Skipping command
+  
+ CHARMM>       define targ sele list .subset. @IN end
+ Parameter: IN -> "190"
+ SELRPN>      1 atoms have been selected out of   9005
+  
+ CHARMM>       coor stat sele targ end
+ SELRPN>      1 atoms have been selected out of   9005
+ STATISTICS FOR         1 SELECTED ATOMS:
+    XMIN =   23.659735 XMAX =   23.659735 XAVE =   23.659735
+    YMIN =    6.186545 YMAX =    6.186545 YAVE =    6.186545
+    ZMIN =  -19.897175 ZMAX =  -19.897175 ZAVE =  -19.897175
+    WMIN =    0.000000 WMAX =    0.000000 WAVE =    0.000000
+  
+ CHARMM>       coor set xdir ?XAVE ydir ?YAVE zdir ?ZAVE sele atom @posion @K @npos end
+ Parameter: POSION -> "POT"
+ Parameter: K -> "10"
+ Parameter: NPOS -> "POT"
+ RDCMND substituted energy or value "?XAVE" to "23.6597"
+ RDCMND substituted energy or value "?YAVE" to "6.18655"
+ RDCMND substituted energy or value "?ZAVE" to "-19.8972"
+ SELRPN>      1 atoms have been selected out of   9005
+ SELECTED COORDINATES SET IN THE MAIN SET.
+
+  
+ CHARMM>       delete atom sele .byres. targ end sort
+ SELRPN>      3 atoms have been selected out of   9005
+
+ Message from MAPIC: Atom numbers are changed.
+
+ Message from MAPIC:          1 residues deleted.
+ DELTIC:         3 bonds deleted
+ DELTIC:         1 angles deleted
+ DELTIC:         1 acceptors deleted
+ PSFSUM> PSF modified: NONBOND lists and IMAGE atoms cleared.
+ PSFSUM> Summary of the structure file counters :
+         Number of segments      =        4   Number of residues   =     2847
+         Number of atoms         =     9002   Number of groups     =     2996
+         Number of bonds         =     8991   Number of angles     =     3947
+         Number of dihedrals     =     1705   Number of impropers  =      107
+         Number of cross-terms   =       44
+         Number of HB acceptors  =     2846   Number of HB donors  =       71
+         Number of NB exclusions =        0   Total charge =    0.00000
+  
+ CHARMM>       incr k by 1
+ Parameter: K <- "11"
+  
+ CHARMM>    if k .le. @ipos goto klp
+ Parameter: IPOS -> "   10"
+ Comparing "11" and "10".
+ IF test evaluated as false.  Skipping command
+  
+ CHARMM>     
+  
+ CHARMM>    return
+ VCLOSE: Closing unit   99 with status "KEEP"
+
+                    RETURNING TO INPUT STREAM     5
+  
+ CHARMM>     
+  
+ CHARMM>    ! ASSUMES WATER IS SEGID BWAT; RENUMBER THE WATER MOLECULES
+ CHARMM>    join bwat renum
+ THE RESIDUE IDENTIFIERS HAVE BEEN RENUMBERED
+ PSFSUM> PSF modified: NONBOND lists and IMAGE atoms cleared.
+ PSFSUM> Summary of the structure file counters :
+         Number of segments      =        4   Number of residues   =     2847
+         Number of atoms         =     9002   Number of groups     =     2996
+         Number of bonds         =     8991   Number of angles     =     3947
+         Number of dihedrals     =     1705   Number of impropers  =      107
+         Number of cross-terms   =       44
+         Number of HB acceptors  =     2846   Number of HB donors  =       71
+         Number of NB exclusions =        0   Total charge =    0.00000
+  
+ CHARMM>     
+  
+ CHARMM>    ! SETUP CRYSTAL (DEFINE, BUILD), IMAGE CENTERING W. MODIFIED PSF
+ CHARMM>    stream /var/tmp/pdb_uploads/tim/charmm-1cbn-18126-1-crystl.str
+ VOPEN> Attempting to open::/var/tmp/pdb_uploads/tim/charmm-1cbn-18126-1-crystl.str::
+ OPNLGU> Unit  99 cannot be opened as /VAR/TMP/PDB_UPLOADS/TIM/CHARMM-1CBN-18126-1-CRYSTL.STR                                                                                                                                                                                                         
+
+      ***** LEVEL  0 WARNING FROM <OPNLGU> *****
+      ***** "OPEN" not possible.
+      ******************************************
+      BOMLEV (  0) IS REACHED - TERMINATING. WRNLEV IS  5
+
+
+                                                  
+                            /---------\           
+                           /           \          
+                          /             \         
+                         /               \        
+                         !  XXXX   XXXX  !        
+                         !  XXXX   XXXX  !        
+                         !  XXX     XXX  !        
+                         !       X       !        
+                          --\   XXX   /--         
+                           ! !  XXX  ! !          
+                           ! !       ! !          
+                           ! I I I I I !          
+                           !  I I I I  !          
+                            \         /           
+                             --     --            
+                               \---/              
+                        XXX             XXX       
+                       XXXX             XXXX      
+                       XXXXX           XXXXX      
+                          XXX         XXX         
+                            XXX     XXX           
+                               XXXXX              
+                              XXX XXX             
+                            XXX     XXX           
+                          XXX         XXX         
+                       XXXXX           XXXXX      
+                       XXXX             XXXX      
+                        XXX             XXX       
+                                                  
+                                                  
+ Execution terminated due to the detection of a fatal error.
+
+                    ABNORMAL TERMINATION
+                    MAXIMUM STACK SPACE USED IS  126690
+                    STACK CURRENTLY IN USE IS         0
+                    MOST SEVERE WARNING WAS AT LEVEL  0
+                    HEAP PRINTOUT-  HEAP SIZE         10240000
+                    SPACE CURRENTLY IN USE IS            77474
+                    MAXIMUM SPACE USED IS              1485134
+                    FREE LIST
+  PRINHP> ADDRESS:               1 LENGTH:        10162526 NEXT:               0
+
+                    $$$$$ JOB ACCOUNTING INFORMATION $$$$$
+                     ELAPSED TIME:     7.93  SECONDS 
+                         CPU TIME:     3.92  SECONDS 

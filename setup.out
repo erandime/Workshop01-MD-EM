@@ -1,0 +1,269 @@
+Linux m1.lobos.nih.gov 2.6.18-164.6.1.el5 #1 SMP Tue Nov 3 16:12:36 EST 2009 x86_64 x86_64 x86_64 GNU/Linux
+ 14:33:53 up 25 days, 22:29, 34 users,  load average: 0.00, 0.00, 0.00
+>>>========>>  FOR SYNTAX AND NOTES, TRY    "c35b3 -help"
+-rwxrwxr-x 1 rvenable 10826677 Dec 18 01:06 /v/apps/ncharmm/c35b3/gnu/gfortamd-xxl.x11
+/v/apps/ncharmm/c35b3/gnu/gfortamd-xxl.x11
+1
+                 Chemistry at HARvard Macromolecular Mechanics
+                   (CHARMM) - Developmental Version 35b3     August 15, 2008   
+       Copyright(c) 1984-2001  President and Fellows of Harvard College
+                              All Rights Reserved
+      Current operating system: Linux-2.6.18-164.6.1.el5(x86_64)@m1.lobos.ni
+                 Created on 12/29/ 9 at 14:33:53 by user: tim         
+
+            Maximum number of ATOMS:    360720, and RESidues:      120240
+            Current HEAP size:        10240000, and STACK size:  10000000
+
+ RDTITL> * RUN SEGMENT THROUGH CHARMM
+ RDTITL> *
+  
+ CHARMM>     
+  
+ CHARMM>    ! read topology and parameter files
+ CHARMM>     
+  
+ CHARMM>    read rtf card name top_all27_prot_na.rtf
+ VOPEN> Attempting to open::top_all27_prot_na.rtf::
+ MAINIO> Residue topology file being read from unit  90.
+ TITLE> *>>>>>>>>CHARMM22 ALL-HYDROGEN TOPOLOGY FILE FOR PROTEINS <<<<<<<
+ TITLE> *>>>>>>>>>>>>>>>>>>>> AND NUCLEIC ACIDS <<<<<<<<<<<<<<<<<<<<<<<<<
+ TITLE> *>>>>> INCLUDES PHI, PSI CROSS TERM MAP (CMAP) CORRECTION <<<<<<<
+ TITLE> *>>>>>>>>>>>>>>>>>>>>>>   JULY, 2004    <<<<<<<<<<<<<<<<<<<<<<<<<<
+ TITLE> * ALL COMMENTS TO ADM JR. VIA THE CHARMM WEB SITE: WWW.CHARMM.ORG
+ TITLE> *               PARAMETER SET DISCUSSION FORUM
+ TITLE> *
+ VCLOSE: Closing unit   90 with status "KEEP"
+  
+ CHARMM>    read param card name par_all27_prot_na.prm
+ VOPEN> Attempting to open::par_all27_prot_na.prm::
+
+          PARAMETER FILE BEING READ FROM UNIT 90
+ TITLE> *>>>>> CHARMM22 ALL-HYDROGEN PARAMETER FILE FOR PROTEINS <<<<<<<<
+ TITLE> *>>>>>>>>>>>>>>>>>>>> AND NUCLEIC ACIDS <<<<<<<<<<<<<<<<<<<<<<<<<
+ TITLE> *>>>>> INCLUDES PHI, PSI CROSS TERM MAP (CMAP) CORRECTION <<<<<<<
+ TITLE> *>>>>>>>>>>>>>>>>>>>>>> DECEMBER, 2003 <<<<<<<<<<<<<<<<<<<<<<<<<<
+ TITLE> * ALL COMMENTS TO ADM JR. VIA THE CHARMM WEB SITE: WWW.CHARMM.ORG
+ TITLE> *               PARAMETER SET DISCUSSION FORUM
+ TITLE> *
+ PARMIO> NONBOND, HBOND lists and IMAGE atoms cleared.
+ VCLOSE: Closing unit   90 with status "KEEP"
+  
+ CHARMM>     
+  
+ CHARMM>    ! Read sequence from the PDB coordinate file
+ CHARMM>    open unit 1 card read name 1cbn-a.pdb
+ VOPEN> Attempting to open::1cbn-a.pdb::
+ OPNLGU> Unit  1 opened for READONLY access to 1cbn-a.pdb
+  
+ CHARMM>    read sequ pdb unit 1
+ MAINIO> Sequence information being read from unit   1.
+ TITLE>  *
+
+          RESIDUE SEQUENCE --    46 RESIDUES
+          THR THR CYS CYS PRO SER ILE VAL ALA ARG SER ASN PHE ASN VAL CYS ARG LEU PRO GLY 
+          THR SER GLU ALA ILE CYS ALA THR TYR THR GLY CYS ILE ILE ILE PRO GLY ALA THR CYS 
+          PRO GLY ASP TYR ALA ASN 
+ ***** Message from SEQRDR ***** THE SYSTEM CONTAINS  4 TITRATABLE GROUPS
+ THE USER MUST PREDETERMINE THE PROTONATION STATE THROUGH THE SEQUENCE AND RTF
+ HIS -  0  ASP -  1  GLU -  1  LYS -  0  TYR -  2
+  
+ CHARMM>     
+  
+ CHARMM>    ! now generate the PSF and also the IC table (SETU keyword)
+ CHARMM>    generate setu a-pro first NTER last CTER
+ THE PATCH 'NTER' WILL BE USED FOR THE FIRST RESIDUE
+ THE PATCH 'CTER' WILL BE USED FOR THE LAST  RESIDUE
+ GENPSF> Segment   1 has been generated. Its identifier is A-PRO.
+ PSFSUM> PSF modified: NONBOND lists and IMAGE atoms cleared.
+ PSFSUM> Summary of the structure file counters :
+         Number of segments      =        1   Number of residues   =       46
+         Number of atoms         =      645   Number of groups     =      195
+         Number of bonds         =      651   Number of angles     =     1172
+         Number of dihedrals     =     1723   Number of impropers  =      107
+         Number of cross-terms   =       44
+         Number of HB acceptors  =       65   Number of HB donors  =       77
+         Number of NB exclusions =        0   Total charge =    0.00000
+ QXFORM> Expanded format used.
+         More than 4 character SEGID used.
+  
+ CHARMM>     
+  
+ CHARMM>    rewind unit 1
+                    REWINDING UNIT     1
+  
+ CHARMM>     
+  
+ CHARMM>    ! set bomlev to -1 to avois sying on lack of hydrogen coordinates
+ CHARMM>    bomlev -1
+  
+ CHARMM>    read coor pdb unit 1
+  read CHARMM-pdb format
+          SPATIAL COORDINATES BEING READ FROM UNIT  1
+ TITLE>  *
+
+ ** WARNING ** For atom in coordinate file, the corresponding residue in the PSF lacks that atom:
+ INDEX=    8 IRES=    1 RESID=1    RES=THR  ATOM=H1  
+
+ ** WARNING ** For atom in coordinate file, the corresponding residue in the PSF lacks that atom:
+ INDEX=    9 IRES=    1 RESID=1    RES=THR  ATOM=H2  
+
+ ** WARNING ** For atom in coordinate file, the corresponding residue in the PSF lacks that atom:
+ INDEX=   10 IRES=    1 RESID=1    RES=THR  ATOM=H3  
+
+ ** WARNING ** For atom in coordinate file, the corresponding residue in the PSF lacks that atom:
+ INDEX=   24 IRES=    2 RESID=2    RES=THR  ATOM=H   
+
+ ** WARNING ** For atom in coordinate file, the corresponding residue in the PSF lacks that atom:
+ INDEX=   37 IRES=    3 RESID=3    RES=CYS  ATOM=H   
+
+ ** WARNING ** For atom in coordinate file, the corresponding residue in the PSF lacks that atom:
+ INDEX=   40 IRES=    3 RESID=3    RES=CYS  ATOM=HB3 
+
+ ** WARNING ** For atom in coordinate file, the corresponding residue in the PSF lacks that atom:
+ INDEX=   47 IRES=    4 RESID=4    RES=CYS  ATOM=H   
+
+ ** WARNING ** For atom in coordinate file, the corresponding residue in the PSF lacks that atom:
+ INDEX=   50 IRES=    4 RESID=4    RES=CYS  ATOM=HB3 
+
+ ** WARNING ** For atom in coordinate file, the corresponding residue in the PSF lacks that atom:
+ INDEX=   60 IRES=    5 RESID=5    RES=PRO  ATOM=HB3 
+
+ ** WARNING ** For atom in coordinate file, the corresponding residue in the PSF lacks that atom:
+ INDEX=   62 IRES=    5 RESID=5    RES=PRO  ATOM=HG3 
+
+ ** WARNING ** For atom in coordinate file, the corresponding residue in the PSF lacks that atom:
+ INDEX=   64 IRES=    5 RESID=5    RES=PRO  ATOM=HD3 
+
+ ** WARNING ** For atom in coordinate file, the corresponding residue in the PSF lacks that atom:
+ INDEX=   71 IRES=    6 RESID=6    RES=SER  ATOM=H   
+
+ ** WARNING ** For atom in coordinate file, the corresponding residue in the PSF lacks that atom:
+ INDEX=   74 IRES=    6 RESID=6    RES=SER  ATOM=HB3 
+
+ ** WARNING ** For atom in coordinate file, the corresponding residue in the PSF lacks that atom:
+ INDEX=   75 IRES=    6 RESID=6    RES=SER  ATOM=HG  
+
+ ** WARNING ** For atom in coordinate file, the corresponding residue in the PSF lacks that atom:
+ INDEX=   83 IRES=    7 RESID=7    RES=ILE  ATOM=CD1 
+
+ ** WARNING ** For atom in coordinate file, the corresponding residue in the PSF lacks that atom:
+ INDEX=   84 IRES=    7 RESID=7    RES=ILE  ATOM=H   
+
+ ** WARNING ** For atom in coordinate file, the corresponding residue in the PSF lacks that atom:
+ INDEX=   88 IRES=    7 RESID=7    RES=ILE  ATOM=HG13
+
+ ** WARNING ** For atom in coordinate file, the corresponding residue in the PSF lacks that atom:
+ INDEX=   92 IRES=    7 RESID=7    RES=ILE  ATOM=HD11
+
+ ** WARNING ** For atom in coordinate file, the corresponding residue in the PSF lacks that atom:
+ INDEX=   93 IRES=    7 RESID=7    RES=ILE  ATOM=HD12
+
+ ** WARNING ** For atom in coordinate file, the residue type does not match that (RESN) in the PSF:   22 PSF= SER  INPUT= PRO 
+
+ ** WARNING ** For atom in coordinate file, the residue type does not match that (RESN) in the PSF:   22 PSF= SER  INPUT= PRO 
+
+ ** WARNING ** For atom in coordinate file, the residue type does not match that (RESN) in the PSF:   22 PSF= SER  INPUT= PRO 
+
+ ** WARNING ** For atom in coordinate file, the residue type does not match that (RESN) in the PSF:   22 PSF= SER  INPUT= PRO 
+
+ ** WARNING ** For atom in coordinate file, the residue type does not match that (RESN) in the PSF:   22 PSF= SER  INPUT= PRO 
+ ** WARNING ** After reading, there are no coordinates for selected atom:     2     1 THR  HT1 
+ ** WARNING ** After reading, there are no coordinates for selected atom:     3     1 THR  HT2 
+ ** WARNING ** After reading, there are no coordinates for selected atom:     4     1 THR  HT3 
+ ** WARNING ** After reading, there are no coordinates for selected atom:    18     2 THR  HN  
+ ** WARNING ** After reading, there are no coordinates for selected atom:    32     3 CYS  HN  
+ ** WARNING ** After reading, there are no coordinates for selected atom:    36     3 CYS  HB1 
+ ** WARNING ** After reading, there are no coordinates for selected atom:    39     3 CYS  HG1 
+ ** WARNING ** After reading, there are no coordinates for selected atom:    43     4 CYS  HN  
+ ** WARNING ** After reading, there are no coordinates for selected atom:    47     4 CYS  HB1 
+ ** WARNING ** After reading, there are no coordinates for selected atom:    50     4 CYS  HG1 
+
+ ** A total of   120 selected atoms have no coordinates
+
+ ** A total of  130 warnings were encountered during coordinate reading **
+
+ ** WARNING ** Coordinates were overwritten for    13 atoms.
+ *** LEVEL  2 WARNING *** BOMLEV IS   -1
+
+ ** WARNING **    33 atoms in coordinates file had a sequence mismatch.
+ *** LEVEL  0 WARNING *** BOMLEV IS   -1
+  
+ CHARMM>    ! them put bomlev back up to 0
+ CHARMM>    bomlev 0
+  
+ CHARMM>     
+  
+ CHARMM>    close unit 1
+ VCLOSE: Closing unit    1 with status "KEEP"
+  
+ CHARMM>     
+  
+ CHARMM>    ! prints out number of atoms that still have undefined coordinates.
+ CHARMM>    define test select segid a-pro .and. ( .not. hydrogen ) .and. ( .not. init ) show end
+ The following atoms are currently set:
+SEGId RESId RESName  .. TYPEs ..
+ A-PRO    7        ILE CD      
+ A-PRO    25       ILE CD      
+ A-PRO    33       ILE CD      
+ A-PRO    34       ILE CD      
+ A-PRO    35       ILE CD      
+ SELRPN>      5 atoms have been selected out of    645
+  
+ CHARMM>     
+  
+ CHARMM>    ic para
+  
+ CHARMM>    ic fill preserve
+  
+ CHARMM>    ic build
+  
+ CHARMM>    hbuild sele all end
+ SELRPN>    645 atoms have been selected out of    645
+
+      ***** LEVEL  4 WARNING FROM <GTHBUI> *****
+      ***** Zero selection specified
+      ******************************************
+      BOMLEV (  0) IS NOT REACHED. WRNLEV IS  5
+
+  
+ CHARMM>     
+  
+ CHARMM>    ! write out the protein structure file (psf) and
+ CHARMM>    ! the coordinate file in pdb and crd format.
+ CHARMM>     
+  
+ CHARMM>    write psf card name 1cbn-pro-final.psf
+ VOPEN> Attempting to open::1cbn-pro-final.psf::
+ RDTITL> * PSF
+ RDTITL> *
+ VCLOSE: Closing unit   90 with status "KEEP"
+  
+ CHARMM>     
+  
+ CHARMM>    write coor card name 1cbn-pro-final.crd
+ VOPEN> Attempting to open::1cbn-pro-final.crd::
+ RDTITL> * COORDS
+ RDTITL> *
+ VCLOSE: Closing unit   90 with status "KEEP"
+ VCLOSE: Closing unit   90 with status "KEEP"
+  
+ CHARMM>     
+  
+ CHARMM>    stop
+$$$$$$  New timer profile $$$$$
+ Total time                      3.22 Other:            0.00
+
+                    NORMAL TERMINATION BY NORMAL STOP
+                    MAXIMUM STACK SPACE USED IS  126264
+                    STACK CURRENTLY IN USE IS         0
+                    MOST SEVERE WARNING WAS AT LEVEL  0
+                    HEAP PRINTOUT-  HEAP SIZE         10240000
+                    SPACE CURRENTLY IN USE IS            13824
+                    MAXIMUM SPACE USED IS                27486
+                    FREE LIST
+  PRINHP> ADDRESS:               1 LENGTH:        10225676 NEXT:        10239501
+  PRINHP> ADDRESS:        10239501 LENGTH:             500 NEXT:               0
+
+                    $$$$$ JOB ACCOUNTING INFORMATION $$$$$
+                     ELAPSED TIME:     3.22  SECONDS 
+                         CPU TIME:     0.30  SECONDS 
